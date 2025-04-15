@@ -11,8 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ordonnance__produits', function (Blueprint $table) {
+        Schema::create('ordonnance_produits', function (Blueprint $table) {
             $table->id();
+            $table->integer('quantite');
+            $table->boolean('statut')
+                  ->default(false) // 'non sélectionné' par défaut
+                  ->comment('false: non sélectionné, true: sélectionné');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
@@ -22,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ordonnance__produits');
+        Schema::dropIfExists('ordonnance_produits');
     }
 };

@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('paiements', function (Blueprint $table) {
             $table->id();
+            $table->float('prix_total');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

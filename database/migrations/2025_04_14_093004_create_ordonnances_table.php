@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('ordonnances', function (Blueprint $table) {
             $table->id();
+            $table->float('montant');
+            $table->timestamps('date_ordonnance');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
