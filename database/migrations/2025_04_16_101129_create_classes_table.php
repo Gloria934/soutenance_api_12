@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('stocks', function (Blueprint $table) {
+        Schema::create('classes', function (Blueprint $table) {
             $table->id();
-            $table->integer('quantite_disponible');
+            $table->string('nom');
             $table->softDeletes();
             $table->timestamps();
-            // clé étrangère en lien avec le secrétariat
-            $table->foreignId('secretaire_id')->constrained('secretaires');
         });
     }
 
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('stocks');
+        Schema::dropIfExists('classes');
     }
 };

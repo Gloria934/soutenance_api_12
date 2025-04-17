@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('stocks', function (Blueprint $table) {
+        Schema::create('sous_categories', function (Blueprint $table) {
             $table->id();
-            $table->integer('quantite_disponible');
+            $table->string('nom');
             $table->softDeletes();
             $table->timestamps();
-            // clé étrangère en lien avec le secrétariat
-            $table->foreignId('secretaire_id')->constrained('secretaires');
+
+            $table->foreignId('categorie_id')->constrained('categories')->onDelete('restrict');
         });
     }
 
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('stocks');
+        Schema::dropIfExists('sous_categories');
     }
 };

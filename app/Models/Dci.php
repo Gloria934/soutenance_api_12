@@ -12,43 +12,26 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * Class Stock
+ * Class Dci
  * 
  * @property int $id
- * @property int $quantite_disponible
+ * @property string $nom
  * @property string|null $deleted_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property int $secretaire_id
  * 
- * @property Secretaire $secretaire
  * @property Collection|PharmaceuticalProduct[] $pharmaceutical_products
  *
  * @package App\Models
  */
-class Stock extends Model
+class Dci extends Model
 {
 	use SoftDeletes;
-	protected $table = 'stocks';
-
-	protected $casts = [
-		'quantite_disponible' => 'int',
-		'secretaire_id' => 'int'
-	];
-
-	protected $hidden = [
-		'secretaire_id'
-	];
+	protected $table = 'dcis';
 
 	protected $fillable = [
-		'quantite_disponible',
-		'secretaire_id'
+		'nom'
 	];
-
-	public function secretaire()
-	{
-		return $this->belongsTo(Secretaire::class);
-	}
 
 	public function pharmaceutical_products()
 	{

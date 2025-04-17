@@ -7,40 +7,34 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * Class Paiement
+ * Class Class
  * 
  * @property int $id
- * @property float $prix_total
+ * @property string $nom
  * @property string|null $deleted_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property int $patient_id
  * 
- * @property Patient $patient
+ * @property Collection|ProduitClass[] $produit_classes
  *
  * @package App\Models
  */
-class Paiement extends Model
+class Classe extends Model
 {
 	use SoftDeletes;
-	protected $table = 'paiements';
-
-	protected $casts = [
-		'prix_total' => 'float',
-		'patient_id' => 'int'
-	];
+	protected $table = 'classes';
 
 	protected $fillable = [
-		'prix_total',
-		'patient_id'
+		'nom'
 	];
 
-	public function patient()
+	public function produit_classes()
 	{
-		return $this->belongsTo(Patient::class);
+		return $this->hasMany(ProduitClass::class, 'classe_id');
 	}
 }

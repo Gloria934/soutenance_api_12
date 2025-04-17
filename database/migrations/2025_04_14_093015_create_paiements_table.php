@@ -16,6 +16,8 @@ return new class extends Migration
             $table->float('prix_total');
             $table->softDeletes();
             $table->timestamps();
+            //clé étrangère du patient
+            $table->foreignId('patient_id')->constrained('patients');
         });
     }
 

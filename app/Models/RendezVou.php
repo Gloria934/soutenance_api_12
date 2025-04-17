@@ -7,33 +7,35 @@
 namespace App\Models;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * Class Stock
+ * Class RendezVou
  * 
  * @property int $id
- * @property int $quantite_disponible
+ * @property Carbon $date_rdv
+ * @property string $statut
  * @property string|null $deleted_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property int $secretaire_id
+ * @property int $service_id
  * 
+ * @property Service $service
  * @property Secretaire $secretaire
- * @property Collection|PharmaceuticalProduct[] $pharmaceutical_products
  *
  * @package App\Models
  */
-class Stock extends Model
+class RendezVou extends Model
 {
 	use SoftDeletes;
-	protected $table = 'stocks';
+	protected $table = 'rendez_vous';
 
 	protected $casts = [
-		'quantite_disponible' => 'int',
-		'secretaire_id' => 'int'
+		'date_rdv' => 'datetime',
+		'secretaire_id' => 'int',
+		'service_id' => 'int'
 	];
 
 	protected $hidden = [
@@ -41,17 +43,19 @@ class Stock extends Model
 	];
 
 	protected $fillable = [
-		'quantite_disponible',
-		'secretaire_id'
+		'date_rdv',
+		'statut',
+		'secretaire_id',
+		'service_id'
 	];
+
+	public function service()
+	{
+		return $this->belongsTo(Service::class);
+	}
 
 	public function secretaire()
 	{
 		return $this->belongsTo(Secretaire::class);
-	}
-
-	public function pharmaceutical_products()
-	{
-		return $this->hasMany(PharmaceuticalProduct::class);
 	}
 }

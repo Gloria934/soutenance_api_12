@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('stocks', function (Blueprint $table) {
-            $table->id();
-            $table->integer('quantite_disponible');
-            $table->softDeletes();
+        Schema::create('produit_categories', function (Blueprint $table) {
+            $table->foreignId('categorie_id')->constrained('categories');
+            $table->foreignId('pharmaceutical_product_id')->constrained('pharmaceutical_products');
+            $table->primary(['categorie_id','pharmaceutical_product_id']);
             $table->timestamps();
-            // clé étrangère en lien avec le secrétariat
-            $table->foreignId('secretaire_id')->constrained('secretaires');
         });
     }
 
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('stocks');
+        Schema::dropIfExists('produit_categories');
     }
 };
