@@ -18,6 +18,11 @@ class DatabaseSeeder extends Seeder
             PermissionSeeder::class, // Création des permissions
             RolePermissionSeeder::class, // Association rôles/permissions
             AdminSeeder::class,       // Création d’un admin par exemple
+            CategorieSeeder::class,
+            SousCategorieSeeder::class,
+            FormeSeeder::class,
+            ClasseSeeder::class,
+            DciSeeder::class,
         
         
         ]);

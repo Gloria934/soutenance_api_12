@@ -3,23 +3,30 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Auth\Events\Verified;
+
 
 class EmailVerificationNotificationController extends Controller
 {
     /**
-     * Send a new email verification notification.
+     * Vérifier l'email de l'utilisateur.
      */
-    public function store(Request $request): JsonResponse|RedirectResponse
+    public function verify(Request $request)
     {
-        if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->intended('/dashboard');
+        $user = $request->user();
+
+        // Si l'email a déjà été vérifié
+        if ($user->hasVerifiedEmail()) {
+            return response()->json(['message' => 'Email déjà vérifié.']);
         }
 
-        $request->user()->sendEmailVerificationNotification();
+        // Marquer l'email comme vérifié
+        $user->markEmailAsVerified();
 
-        return response()->json(['status' => 'verification-link-sent']);
+        // Déclencher un événement (par exemple, pour envoyer une notification)
+        event(new Verified($user));
+
+        return response()->json(['message' => 'Email vérifié avec succès.']);
     }
 }

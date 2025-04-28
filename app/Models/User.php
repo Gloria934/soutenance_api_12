@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -18,6 +20,9 @@ use Laravel\Sanctum\HasApiTokens;
 
 
 use Spatie\Permission\Traits\HasRoles;
+
+use App\Notifications\CustomVerifyEmail;
+use App\Notifications\CustomResetPassword;
 
 
 /**
@@ -43,7 +48,7 @@ use Spatie\Permission\Traits\HasRoles;
  *
  * @package App\Models
  */
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
 	use SoftDeletes,HasApiTokens, Notifiable, HasRoles, HasFactory;
 	protected $table = 'users';
@@ -87,4 +92,23 @@ class User extends Authenticatable
 	{
 		return $this->hasOne(Secretaire::class, 'id');
 	}
+
+
+	// Dans le modèle User.php
+
+	public function sendEmailVerificationNotification()
+	{
+		$this->notify(new CustomVerifyEmail());
+	}
+
+
+
+// ...
+
+	public function sendPasswordResetNotification($token)
+	{
+		$this->notify(new CustomResetPassword($token));
+	}
+
+
 }

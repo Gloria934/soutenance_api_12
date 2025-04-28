@@ -5,9 +5,12 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-use App\Models\Patient;
+use Illuminate\Support\Facades\Storage;
+use App\Models\Ordonnance;
 
-class PatientController extends Controller
+use Illuminate\Support\Facades\Auth;
+
+class OrdonnanceController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -50,31 +53,23 @@ class PatientController extends Controller
     }
 
 
-    //fonction de recher d'un patient par son code
-    public function findByCode($code)
-    {
-        $patient = Patient::where('code_patient', $code)->with('user')->first();
 
-        if (! $patient) {
-            return response()->json(['message' => 'Aucun patient trouvé'], 404);
+
+public function download($id)
+    {
+        $ordonnance = Ordonnance::findOrFail($id);
+
+        // Optionnel : s'assurer que l'utilisateur est bien le patient concerné
+        if (Auth::user()->id !== $ordonnance->patient->user_id) {
+            return response()->json(['message' => 'Accès non autorisé.'], 403);
         }
 
-        return response()->json([
-            'patient' => $patient,
-            'user' => $patient->user,
-        ]);
-    }
-
-
-    public function mesOrdonnances(Request $request)
-    {
-        $ordonnances = $request->user()->patient?->ordonnances;
-
-        if (! $ordonnances) {
-            return response()->json(['message' => 'Aucune ordonnance trouvée.'], 404);
+        if (! $ordonnance->fichier || !Storage::disk('public')->exists($ordonnance->fichier)) {
+            return response()->json(['message' => 'Fichier non trouvé.'], 404);
         }
 
-        return response()->json($ordonnances);
+        return response()->download(storage_path('app/public/' . $ordonnance->fichier));
+
     }
 
 }

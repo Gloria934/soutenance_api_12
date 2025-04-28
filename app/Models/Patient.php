@@ -58,13 +58,13 @@ class Patient extends Model
 
 
 	// App\Models\Patient.php
-public static function generatePatientCode()
-{
-    $lastPatient = self::latest('id')->first();
+	public static function generatePatientCode()
+	{
+		$lastPatient = self::latest('id')->first();
 
-    $number = $lastPatient ? $lastPatient->id + 1 : 1;
+		$number = $lastPatient ? $lastPatient->id + 1 : 1;
 
-    return 'PAT-' . str_pad($number, 4, '0', STR_PAD_LEFT);
-}
+		return 'PAT-' . str_pad($number, 4, '0', STR_PAD_LEFT);
+	}
 
 }
