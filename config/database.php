@@ -10,18 +10,29 @@ return [
     |--------------------------------------------------------------------------
     |
     | Here you may specify which of the database connections below you wish
+<<<<<<< HEAD
     | to use as your default connection for all database work. Of course
     | you may use many connections at once using the Database library.
     |
     */
 
     'default' => env('DB_CONNECTION', 'mysql'),
+=======
+    | to use as your default connection for database operations. This is
+    | the connection which will be utilized unless another connection
+    | is explicitly specified when you execute a query / statement.
+    |
+    */
+
+    'default' => env('DB_CONNECTION', 'sqlite'),
+>>>>>>> 52264222fe4f6359aa16adf4e0a08ebf53ee3ee1
 
     /*
     |--------------------------------------------------------------------------
     | Database Connections
     |--------------------------------------------------------------------------
     |
+<<<<<<< HEAD
     | Here are each of the database connections setup for your application.
     | Of course, examples of configuring each database platform that is
     | supported by Laravel is shown below to make development simple.
@@ -30,6 +41,11 @@ return [
     | All database work in Laravel is done through the PHP PDO facilities
     | so make sure you have the driver for your particular database of
     | choice installed on your machine before you begin development.
+=======
+    | Below are all of the database connections defined for your application.
+    | An example configuration is provided for each database system which
+    | is supported by Laravel. You're free to add / remove connections.
+>>>>>>> 52264222fe4f6359aa16adf4e0a08ebf53ee3ee1
     |
     */
 
@@ -37,14 +53,25 @@ return [
 
         'sqlite' => [
             'driver' => 'sqlite',
+<<<<<<< HEAD
             'url' => env('DATABASE_URL'),
             'database' => env('DB_DATABASE', database_path('database.sqlite')),
             'prefix' => '',
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
+=======
+            'url' => env('DB_URL'),
+            'database' => env('DB_DATABASE', database_path('database.sqlite')),
+            'prefix' => '',
+            'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
+            'busy_timeout' => null,
+            'journal_mode' => null,
+            'synchronous' => null,
+>>>>>>> 52264222fe4f6359aa16adf4e0a08ebf53ee3ee1
         ],
 
         'mysql' => [
             'driver' => 'mysql',
+<<<<<<< HEAD
             'url' => env('DATABASE_URL'),
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '3306'),
@@ -54,6 +81,37 @@ return [
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
+=======
+            'url' => env('DB_URL'),
+            'host' => env('DB_HOST', '127.0.0.1'),
+            'port' => env('DB_PORT', '3306'),
+            'database' => env('DB_DATABASE', 'laravel'),
+            'username' => env('DB_USERNAME', 'root'),
+            'password' => env('DB_PASSWORD', ''),
+            'unix_socket' => env('DB_SOCKET', ''),
+            'charset' => env('DB_CHARSET', 'utf8mb4'),
+            'collation' => env('DB_COLLATION', 'utf8mb4_unicode_ci'),
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+
+        'mariadb' => [
+            'driver' => 'mariadb',
+            'url' => env('DB_URL'),
+            'host' => env('DB_HOST', '127.0.0.1'),
+            'port' => env('DB_PORT', '3306'),
+            'database' => env('DB_DATABASE', 'laravel'),
+            'username' => env('DB_USERNAME', 'root'),
+            'password' => env('DB_PASSWORD', ''),
+            'unix_socket' => env('DB_SOCKET', ''),
+            'charset' => env('DB_CHARSET', 'utf8mb4'),
+            'collation' => env('DB_COLLATION', 'utf8mb4_unicode_ci'),
+>>>>>>> 52264222fe4f6359aa16adf4e0a08ebf53ee3ee1
             'prefix' => '',
             'prefix_indexes' => true,
             'strict' => true,
@@ -65,6 +123,7 @@ return [
 
         'pgsql' => [
             'driver' => 'pgsql',
+<<<<<<< HEAD
             'url' => env('DATABASE_URL'),
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '5432'),
@@ -75,11 +134,24 @@ return [
             'prefix' => '',
             'prefix_indexes' => true,
             'schema' => 'public',
+=======
+            'url' => env('DB_URL'),
+            'host' => env('DB_HOST', '127.0.0.1'),
+            'port' => env('DB_PORT', '5432'),
+            'database' => env('DB_DATABASE', 'laravel'),
+            'username' => env('DB_USERNAME', 'root'),
+            'password' => env('DB_PASSWORD', ''),
+            'charset' => env('DB_CHARSET', 'utf8'),
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'search_path' => 'public',
+>>>>>>> 52264222fe4f6359aa16adf4e0a08ebf53ee3ee1
             'sslmode' => 'prefer',
         ],
 
         'sqlsrv' => [
             'driver' => 'sqlsrv',
+<<<<<<< HEAD
             'url' => env('DATABASE_URL'),
             'host' => env('DB_HOST', 'localhost'),
             'port' => env('DB_PORT', '1433'),
@@ -89,6 +161,19 @@ return [
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
+=======
+            'url' => env('DB_URL'),
+            'host' => env('DB_HOST', 'localhost'),
+            'port' => env('DB_PORT', '1433'),
+            'database' => env('DB_DATABASE', 'laravel'),
+            'username' => env('DB_USERNAME', 'root'),
+            'password' => env('DB_PASSWORD', ''),
+            'charset' => env('DB_CHARSET', 'utf8'),
+            'prefix' => '',
+            'prefix_indexes' => true,
+            // 'encrypt' => env('DB_ENCRYPT', 'yes'),
+            // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
+>>>>>>> 52264222fe4f6359aa16adf4e0a08ebf53ee3ee1
         ],
 
     ],
@@ -100,11 +185,22 @@ return [
     |
     | This table keeps track of all the migrations that have already run for
     | your application. Using this information, we can determine which of
+<<<<<<< HEAD
     | the migrations on disk haven't actually been run in the database.
     |
     */
 
     'migrations' => 'migrations',
+=======
+    | the migrations on disk haven't actually been run on the database.
+    |
+    */
+
+    'migrations' => [
+        'table' => 'migrations',
+        'update_date_on_publish' => true,
+    ],
+>>>>>>> 52264222fe4f6359aa16adf4e0a08ebf53ee3ee1
 
     /*
     |--------------------------------------------------------------------------
@@ -113,33 +209,60 @@ return [
     |
     | Redis is an open source, fast, and advanced key-value store that also
     | provides a richer body of commands than a typical key-value system
+<<<<<<< HEAD
     | such as APC or Memcached. Laravel makes it easy to dig right in.
+=======
+    | such as Memcached. You may define your connection settings here.
+>>>>>>> 52264222fe4f6359aa16adf4e0a08ebf53ee3ee1
     |
     */
 
     'redis' => [
 
+<<<<<<< HEAD
         'client' => env('REDIS_CLIENT', 'predis'),
 
         'options' => [
             'cluster' => env('REDIS_CLUSTER', 'predis'),
             'prefix' => Str::slug(env('APP_NAME', 'laravel'), '_').'_database_',
+=======
+        'client' => env('REDIS_CLIENT', 'phpredis'),
+
+        'options' => [
+            'cluster' => env('REDIS_CLUSTER', 'redis'),
+            'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_').'_database_'),
+            'persistent' => env('REDIS_PERSISTENT', false),
+>>>>>>> 52264222fe4f6359aa16adf4e0a08ebf53ee3ee1
         ],
 
         'default' => [
             'url' => env('REDIS_URL'),
             'host' => env('REDIS_HOST', '127.0.0.1'),
+<<<<<<< HEAD
             'password' => env('REDIS_PASSWORD', null),
             'port' => env('REDIS_PORT', 6379),
             'database' => env('REDIS_DB', 0),
+=======
+            'username' => env('REDIS_USERNAME'),
+            'password' => env('REDIS_PASSWORD'),
+            'port' => env('REDIS_PORT', '6379'),
+            'database' => env('REDIS_DB', '0'),
+>>>>>>> 52264222fe4f6359aa16adf4e0a08ebf53ee3ee1
         ],
 
         'cache' => [
             'url' => env('REDIS_URL'),
             'host' => env('REDIS_HOST', '127.0.0.1'),
+<<<<<<< HEAD
             'password' => env('REDIS_PASSWORD', null),
             'port' => env('REDIS_PORT', 6379),
             'database' => env('REDIS_CACHE_DB', 1),
+=======
+            'username' => env('REDIS_USERNAME'),
+            'password' => env('REDIS_PASSWORD'),
+            'port' => env('REDIS_PORT', '6379'),
+            'database' => env('REDIS_CACHE_DB', '1'),
+>>>>>>> 52264222fe4f6359aa16adf4e0a08ebf53ee3ee1
         ],
 
     ],
