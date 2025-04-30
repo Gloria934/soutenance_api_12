@@ -3,36 +3,92 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
+use App\Models\User;
 
 class AuthenticatedSessionController extends Controller
 {
-    /**
-     * Handle an incoming authentication request.
-     */
-    public function store(LoginRequest $request): Response
+    public function store(Request $request)
     {
-        $request->authenticate();
+        // ✅ 1. Validation avec messages personnalisés
+        $request->validate([
+            'email'    => 'required|email',
+            'password' => 'required',
+        ], [
+            'email.required'    => 'L\'adresse email est obligatoire.',
+            'email.email'       => 'L\'adresse email n\'est pas valide.',
+            'password.required' => 'Le mot de passe est obligatoire.',
+        ]);
 
-        $request->session()->regenerate();
+        // ✅ 2. Limiter les tentatives de connexion (anti-brute-force)
+        $key = Str::lower($request->email) . '|' . $request->ip();
+        if (RateLimiter::tooManyAttempts($key, 5)) {
+            return response()->json(['message' => 'Trop de tentatives. Réessayez dans 1 minute.'], 429);
+        }
 
-        return response()->noContent();
+        RateLimiter::hit($key, 60); // expire après 60 secondes
+
+        // Recherche de l’utilisateur
+        $user = User::where('email', $request->email)->first();
+
+        if (! $user || ! Hash::check($request->password, $user->password)) {
+            return response()->json(['message' => 'Identifiants invalides'], 401);
+        }
+
+        // ✅ 3. Vérification si le compte est actif
+        if (is_null($user->email_verified_at)) {
+            return response()->json([
+                'message' => 'Un lien de confirmation a été envoyé à votre email. Veuillez l’utiliser pour activer votre compte.'
+            ], 403);
+        }
+        
+
+        // ✅ 4. Vérifier si l’utilisateur a le droit d’accéder (optionnel)
+        // Exemple : bloquer accès aux patients via cette API
+        // if ($user->hasRole('patient')) {
+        //     return response()->json(['message' => 'Accès non autorisé'], 403);
+        // }
+
+        // ✅ 5. Création du token
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        // ✅ 6. Renvoyer des informations supplémentaires (redirection)
+        return response()->json([
+            'message'       => 'Connexion réussie',
+            'token'         => $token,
+            'user'          => $user,
+            'roles'         => $user->getRoleNames(),
+            'code_patient'  => optional($user->patient)->code_patient,
+            'redirect_url'  => $this->getRedirectUrl($user), // 👈 nouvelle méthode
+        ]);
     }
 
-    /**
-     * Destroy an authenticated session.
-     */
-    public function destroy(Request $request): Response
+    public function destroy(Request $request)
     {
-        Auth::guard('web')->logout();
+        // ✅ Suppression du token actuel
+        $request->user()->currentAccessToken()->delete();
 
-        $request->session()->invalidate();
+        return response()->json(['message' => 'Déconnexion réussie']);
+    }
 
-        $request->session()->regenerateToken();
+    // ✅ Méthode ajoutée pour déterminer la redirection selon le rôle
+    private function getRedirectUrl(User $user)
+    {
+        if ($user->hasRole('admin')) {
+            return '/admin/dashboard';
+        }
 
-        return response()->noContent();
+        if ($user->hasRole('patient')) {
+            return '/patient/dashboard';
+        }
+
+        if ($user->hasRole('pharmacien')) {
+            return '/pharmacien/home';
+        }
+
+        return '/';
     }
 }

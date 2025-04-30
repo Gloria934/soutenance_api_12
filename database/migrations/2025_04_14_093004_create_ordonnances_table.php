@@ -14,9 +14,13 @@ return new class extends Migration
         Schema::create('ordonnances', function (Blueprint $table) {
             $table->id();
             $table->float('montant');
-            $table->timestamps('date_ordonnance');
+            $table->date('date_ordonnance');
             $table->softDeletes();
             $table->timestamps();
+            // clé étrangère pour le pharmacien qui établit l'ordonnance
+            $table->foreignId('pharmacien_id')->constrained('pharmaciens');
+            //clé étrangère du patient pour qui on établit l'ordonnance
+            $table->foreignId('patient_id')->constrained('patients');
         });
     }
 

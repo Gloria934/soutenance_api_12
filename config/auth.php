@@ -61,6 +61,7 @@ return [
             'provider' => 'users',
         ],
 <<<<<<< HEAD
+<<<<<<< HEAD
 
         'api' => [
             'driver' => 'token',
@@ -69,6 +70,14 @@ return [
         ],
 =======
 >>>>>>> 52264222fe4f6359aa16adf4e0a08ebf53ee3ee1
+=======
+        
+        'sanctum' => [
+        'driver' => 'sanctum',
+        'provider' => 'users',
+        ],
+        
+>>>>>>> 736396e76a39659a5d91e88e123606e6322654ba
     ],
 
     /*

@@ -16,6 +16,8 @@ return new class extends Migration
             $table->integer('quantite_disponible');
             $table->softDeletes();
             $table->timestamps();
+            // clé étrangère en lien avec le secrétariat
+            $table->foreignId('secretaire_id')->constrained('secretaires');
         });
     }
 

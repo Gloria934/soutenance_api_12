@@ -12,28 +12,28 @@ class PasswordResetLinkController extends Controller
 {
     /**
      * Handle an incoming password reset link request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
      */
     public function store(Request $request): JsonResponse
     {
         $request->validate([
             'email' => ['required', 'email'],
+        ], [
+            'email.required' => 'Veuillez fournir votre adresse email.',
+            'email.email' => 'L\'adresse email fournie n\'est pas valide.',
         ]);
 
-        // We will send the password reset link to this user. Once we have attempted
-        // to send the link, we will examine the response then see the message we
-        // need to show to the user. Finally, we'll send out a proper response.
         $status = Password::sendResetLink(
             $request->only('email')
         );
 
         if ($status != Password::RESET_LINK_SENT) {
-            throw ValidationException::withMessages([
-                'email' => [__($status)],
-            ]);
+            return response()->json([
+                'message' => 'Impossible d\'envoyer le lien de réinitialisation. Veuillez vérifier votre adresse email.',
+            ], 400); // 400 = Bad Request
         }
 
-        return response()->json(['status' => __($status)]);
+        return response()->json([
+            'message' => 'Un lien de réinitialisation de mot de passe a été envoyé à votre adresse email.',
+        ]);
     }
 }

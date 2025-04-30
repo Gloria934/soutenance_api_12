@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('paiements', function (Blueprint $table) {
+        Schema::create('formes', function (Blueprint $table) {
             $table->id();
-            $table->float('prix_total');
+            $table->string('nom');
             $table->softDeletes();
             $table->timestamps();
         });
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('paiements');
+        Schema::dropIfExists('formes');
     }
 };

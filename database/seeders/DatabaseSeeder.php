@@ -13,11 +13,33 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->call([
+            RoleSeeder::class,   //Création des rôles
+            PermissionSeeder::class, // Création des permissions
+            RolePermissionSeeder::class, // Association rôles/permissions
+            AdminSeeder::class,       // Création d’un admin par exemple
+            CategorieSeeder::class,
+            SousCategorieSeeder::class,
+            FormeSeeder::class,
+            ClasseSeeder::class,
+            DciSeeder::class,
+        
+        
+        ]);
+
         // User::factory(10)->create();
 
-        User::factory()->create([
+        /*User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
-        ]);
+        ]);*/
     }
 }
+
+
+                
+                 
+                
+                
+        
+    

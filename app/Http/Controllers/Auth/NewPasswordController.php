@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Notifications\PasswordResetSuccessNotification;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rules;
+use Illuminate\Validation\Rules\Password as PasswordRules;
 use Illuminate\Validation\ValidationException;
 
 class NewPasswordController extends Controller
@@ -24,12 +25,18 @@ class NewPasswordController extends Controller
         $request->validate([
             'token' => ['required'],
             'email' => ['required', 'email'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password' => [
+                'required',
+                'confirmed',
+                PasswordRules::min(8) // mot de passe d'au moins 8 caractères
+                    ->letters()
+                    ->mixedCase()
+                    ->numbers()
+                    ->symbols()
+                    ->uncompromised(), // doit pas faire partie des mots de passe compromis
+            ],
         ]);
 
-        // Here we will attempt to reset the user's password. If it is successful we
-        // will update the password on an actual user model and persist it to the
-        // database. Otherwise we will parse the error and return the response.
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function ($user) use ($request) {
@@ -39,15 +46,18 @@ class NewPasswordController extends Controller
                 ])->save();
 
                 event(new PasswordReset($user));
+
+                // Envoyer la notification de succès
+                $user->notify(new PasswordResetSuccessNotification());
             }
         );
 
         if ($status != Password::PASSWORD_RESET) {
             throw ValidationException::withMessages([
-                'email' => [__($status)],
+                'email' => ['Impossible de réinitialiser le mot de passe. Vérifiez votre email ou le lien.'],
             ]);
         }
 
-        return response()->json(['status' => __($status)]);
+        return response()->json(['message' => 'Mot de passe réinitialisé avec succès.']);
     }
 }

@@ -2,21 +2,23 @@
 
 namespace App\Enums;
 
-enum UniteVenteEnum: string
+enum UniteMesureEnum: string
 {
-    case PLAQUETTES = 'plaquette';
-    case BOITE = 'boite';
-    case FLACON = 'flacon';
-    case TUBE = 'tube';
+    case MG = 'mg';
+    case MCG = 'mcg';
+    case L = 'litre';
+    case ML = 'mL';
+    case UI = 'UI';
 
     // Optionnel : Ajouter des labels lisibles
     public function label(): string
     {
         return match($this) {
-            self::PLAQUETTES => 'Plaquette',
-            self::BOITE => 'Boîte',
-            self::FLACON => 'Flacon',
-            self::TUBE=> 'Tube',
+            self::MG => 'Mg',
+            self::MCG => 'Mcg',
+            self::L => 'L',
+            self::ML => 'mL',
+            self::UI=> 'UI',
         };
     }
 
