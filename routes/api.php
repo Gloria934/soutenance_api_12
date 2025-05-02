@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\API\PatientController;
 use App\Http\Controllers\API\UserController;
-use App\Http\Controllers\API\UserProfileController;
+
 
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
@@ -57,7 +57,7 @@ Route::middleware('auth:sanctum')->prefix('users')->group(function () {
     Route::delete('{id}', [UserController::class, 'destroy']);       // Supprimer un user
     Route::post('{id}/role', [UserController::class, 'assignRole']); // Attribuer un rôle
 
-    Route::put('/user/profile', [UserProfileController::class, 'update']);
+    
 
     Route::get('/roles', [UserController::class, 'roles']); // Liste des rôles
     Route::post('/users', [UserController::class, 'store']); // Création d'un utilisateur

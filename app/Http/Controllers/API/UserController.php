@@ -9,13 +9,16 @@ use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Role;
 
 use Illuminate\Support\Facades\Auth;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
+
+
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 use Barryvdh\DomPDF\Facade\Pdf;
-
+use Illuminate\Http\JsonResponse;
 
 class UserController extends Controller
 {
@@ -37,7 +40,7 @@ class UserController extends Controller
         // 🔍 Recherche
         if ($search = $request->query('search')) {
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
+                $q->where('nom', 'like', "%{$search}%")
                   ->orWhere('email', 'like', "%{$search}%");
             });
         }
@@ -63,27 +66,88 @@ class UserController extends Controller
         return response()->json($user);
     }
 
-    // ✅ Mettre à jour un utilisateur
-    public function update(Request $request, $id)
-    {
-        $user = User::findOrFail($id);
+    // ✅ Mettre à jour profil d'un utilisateur
 
+    public function update(Request $request)
+    {
+        // 1. Validation
+        $validatedData = $request->validate([
+            'nom' => 'sometimes|string|max:255',
+            'prenom' => 'sometimes|string|max:255',
+            'telephone' => 'sometimes|string|max:255',
+            'email' => 'sometimes|email|unique:users,email,' . $request->user()->id,
+            'profile_illustratif' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        // 2. Récupération de l'utilisateur
+        $user = $request->user();
+        $user->fill($validatedData);
+
+        // 3. Gestion de l'image
+        if ($request->hasFile('profile_illustratif')) {
+            // Supprime l'ancienne image si elle existe
+            $user->clearMediaCollection('profile_images');
+            
+            // Ajoute la nouvelle image avec conversion
+            $user->addMediaFromRequest('profile_illustratif')
+                ->withResponsiveImages() // Génère des versions responsive
+                ->usingFileName(md5($request->file('profile_illustratif')->getClientOriginalName()) . '.' . $request->file('image_profile')->extension())
+                ->toMediaCollection('profile_images');
+        }
+
+        $user->save();
+
+        // 4. Récupération de l'URL optimisée
+        $media = $user->getFirstMedia('profile_images');
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Profil mis à jour avec succès.',
+            'data' => [
+                'user' => $user->only(['id', 'nom', 'email']),
+                'profile_illustratif' => $media ? [
+                    'original' => $media->getUrl(),
+                    'thumbnail' => $media->getUrl('thumb'), // Conversion 'thumb'
+                    'responsive' => $media->getResponsiveImageUrls() // Toutes les tailles
+                ] : null
+            ]
+        ]);
+    }
+
+    //créer utilisateur sans lui attribuer rôle
+
+    public function store(Request $request)
+    {
         $validator = Validator::make($request->all(), [
-            'name'  => 'sometimes|string|max:255',
-            'email' => 'sometimes|email|unique:users,email,' . $id,
+            'nom'     => 'required|string|max:255',
+            'prenom'     => 'required|string|max:255',
+            'email'    => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
+            'role'     => 'nullable|string|exists:roles,name',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $user->update($validator->validated());
+        $user = User::create([
+            'nom'     => $request->nom,
+            'prenom'     => $request->prenom,
+            'email'    => $request->email,
+            'password' => bcrypt($request->password),
+        ]);
+
+        if ($request->filled('role')) {
+            $user->assignRole($request->role);
+        }
 
         return response()->json([
-            'message' => 'Utilisateur mis à jour avec succès.',
-            'user'    => $user
-        ]);
+            'message' => 'Utilisateur créé avec succès.',
+            'user'    => $user->load('roles'), // pour retourner le(s) rôle(s) avec l'utilisateur
+        ], 201);
     }
+
+
 
     // ✅ Attribuer un rôle à un utilisateur
     public function assignRole(Request $request, $id)
@@ -103,16 +167,17 @@ class UserController extends Controller
         ]);
     }
 
-    // ✅ Supprimer un utilisateur
+    // ✅ Désactiver un utilisateur
     public function destroy($id)
     {
         $user = User::findOrFail($id);
         $user->delete();
 
         return response()->json([
-            'message' => 'Utilisateur supprimé avec succès.',
+            'message' => 'Utilisateur désactivé avec succès.',
         ]);
     }
+
 
     // ✅ Lister tous les rôles disponibles
     public function roles()
@@ -122,35 +187,38 @@ class UserController extends Controller
     }
 
 
-    // ✅ Créer un nouvel utilisateur avec rôle (si fourni)
-    public function store(Request $request)
+    // ✅ Créer un nouvel utilisateur et lui attribuer un rôle, gérer par l'admin 
+
+    public function storeUserWithRole(Request $request):JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-            'role'     => 'nullable|string|exists:roles,name',
+        // Validation
+        $validated = $request->validate([
+            'nom' => 'required|string|max:255',
+            'prenom' => 'required|string|max:255',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|string|min:8',
+            'role_name' => 'required|string|exists:roles,name' // Validation par nom de rôle
         ]);
 
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
+        // Création de l'utilisateur
         $user = User::create([
-            'name'     => $request->name,
-            'email'    => $request->email,
-            'password' => bcrypt($request->password),
+            'nom' => $validated['nom'],
+            'prenom' => $validated['prenom'],
+            'email' => $validated['email'],
+            'password' => bcrypt($validated['password']),
         ]);
 
-        if ($request->filled('role')) {
-            $user->assignRole($request->role);
-        }
+        // Attribution directe par nom de rôle
+        $user->assignRole($validated['role_name']);
 
         return response()->json([
-            'message' => 'Utilisateur créé avec succès.',
-            'user'    => $user->load('roles'), // pour retourner le(s) rôle(s) avec l'utilisateur
+            'message' => 'Utilisateur créé avec succès',
+            'user' => $user->only(['id', 'nom', 'email']),
+            'role' => $validated['role_name']
         ], 201);
     }
+
+    
 
 
     //fonction pour exporter la liste des utilsateurs en fichier excel
@@ -218,8 +286,8 @@ class UserController extends Controller
         return response()->json([
             'user' => $user,
             'roles' => $user->getRoleNames(),
-            'code_patient' => optional($user->patient)->code_patient,
-            'image_profile' => $user->image_profile ? asset('storage/' . $user->image_profile) : null,
+            'patient_code' => optional($user->patient)->code_patient,
+            'profile_illustratif' => $user->profile_illustratif ? asset('storage/' . $user->profile_illustratif) : null,
         ]);
     }
 

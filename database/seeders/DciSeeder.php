@@ -2,16 +2,22 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Dci;
 
 class DciSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        //
+        $dcis = ['Paracétamol',
+                'Amoxicilline',
+                'Metronidazole',
+                'Ciprofloxacine',
+                'Cotrimoxazole',
+                'Ibuprofène'];
+
+        foreach ($dcis as $nom) {
+            Dci::create(['nom' => $nom]);
+        }
     }
 }

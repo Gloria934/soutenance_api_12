@@ -19,7 +19,7 @@ class RolePermissionSeeder extends Seeder
         $patient = Role::where('name', 'patient')->first();
         $secretaire = Role::where('name', 'secretaire')->first();
         $pharmacien = Role::where('name', 'pharmacien')->first();
-        $service_medical = Role::where('name', 'service_medical')->first();
+        $service = Role::where('name', 'service')->first();
         $accueil = Role::where('name', 'accueil')->first();
 
         $admin->syncPermissions(Permission::all());
@@ -37,7 +37,7 @@ class RolePermissionSeeder extends Seeder
             'gérer pharmacie',
         ]);
 
-        $service_medical->givePermissionTo([
+        $service->givePermissionTo([
             'créer ordonnance',
             'view patients',
         ]);

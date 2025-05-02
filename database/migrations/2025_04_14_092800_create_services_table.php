@@ -14,19 +14,19 @@ return new class extends Migration
         Schema::create('services', function (Blueprint $table) {
             $table->id();
             $table->string('nom');
-            $table->string('telephone');
-            $table->string('email')->unique();
-            $table->longtext('profile_illustratif');
-            $table->float('prix_rdv');
-            $table->time('heure_ouverture');
-            $table->time('heure_fermeture');
-            $table->time('duree_moy_rdv');
+            $table->string('telephone')->nullable();
+            $table->string('email')->unique()->nullable();
+            $table->longtext('profile_illustratif')->nullable();
+            $table->float('prix_rdv')->nullable();
+            $table->time('heure_ouverture')->nullable();
+            $table->time('heure_fermeture')->nullable();
+            $table->time('duree_moy_rdv')->nullable();
             $table->boolean('sous_rdv');
             $table->softDeletes();
             $table->timestamps();
 
             // clé étrangère d'utilisateur, mais de l'admin
-            $table->foreignId('admin_id')->constrained('admins');
+            $table->foreignId('admin_id')->constrained('admins')->nullable(false);
         });
     }
 

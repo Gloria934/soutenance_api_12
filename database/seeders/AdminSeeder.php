@@ -2,12 +2,11 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-
-use Illuminate\Support\Facades\Hash;
-
 use App\Models\User;
+use App\Models\Admin;
+use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Hash;
 
 class AdminSeeder extends Seeder
 {
@@ -16,12 +15,33 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        /*$admin = User::Create([
-            'nom' => 'Super Admin',
-            'email' => 'admin@example.com',
-            'password' => Hash::make('password'),
-        ]);
+        // 1. Créer ou récupérer le rôle admin
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
 
-        $admin->assignRole('admin');*/
+        // 2. Vérifier si l'admin existe déjà
+        $adminUser = User::where('email', 'admin@example.com')->first();
+
+        if (!$adminUser) {
+            // 3. Créer l'utilisateur admin
+            $adminUser = User::create([
+                'nom' => 'Super Admin',
+                'email' => 'admin@example.com',
+                'password' => Hash::make('password'), // Changez ce mot de passe en prod
+            ]);
+
+            // 4. Assigner le rôle
+            $adminUser->assignRole($adminRole);
+
+            // 5. Créer l'enregistrement admin (si pas géré automatiquement par l'Observer)
+            if (!Admin::where('id', $adminUser->id)->exists()) {
+                Admin::create([
+                    'id' => $adminUser->id,
+                ]);
+            }
+
+            $this->command->info('Super Admin créé avec succès !');
+        } else {
+            $this->command->info('Un admin existe déjà avec cet email.');
+        }
     }
 }

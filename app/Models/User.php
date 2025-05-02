@@ -25,6 +25,10 @@ use App\Notifications\CustomVerifyEmail;
 use App\Notifications\CustomResetPassword;
 
 
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
+
 /**
  * Class User
  * 
@@ -48,9 +52,9 @@ use App\Notifications\CustomResetPassword;
  *
  * @package App\Models
  */
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable implements MustVerifyEmail, HasMedia
 {
-	use SoftDeletes,HasApiTokens, Notifiable, HasRoles, HasFactory;
+	use SoftDeletes,HasApiTokens, Notifiable, HasRoles, HasFactory,InteractsWithMedia;
 	protected $table = 'users';
 
 	protected $casts = [
@@ -111,4 +115,12 @@ class User extends Authenticatable implements MustVerifyEmail
 	}
 
 
+	public function registerMediaConversions(?Media $media = null): void
+	{
+    $this->addMediaConversion('thumb')
+         ->width(200)
+         ->height(200)
+         ->optimize() // Compression automatique
+         ->quality(80);
+	}
 }

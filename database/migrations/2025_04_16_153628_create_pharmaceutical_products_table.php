@@ -23,7 +23,7 @@ return new class extends Migration
                   ->comment('Unité de mesure du dosage: ' . implode(', ', UniteMesureEnum::values()));
             $table->string('code');
             $table->string('nom_laboratoire')->nullable();
-            $table->longtext('image_produit');
+            $table->longtext('image_produit')->nullable();
             $table->float('prix');
             $table->text('description');
             $table->date('date_expiration');

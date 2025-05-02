@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             FormeSeeder::class,
             ClasseSeeder::class,
             DciSeeder::class,
+            ServiceSeeder::class,
         
         
         ]);

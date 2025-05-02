@@ -53,7 +53,7 @@ class PatientController extends Controller
     //fonction de recher d'un patient par son code
     public function findByCode($code)
     {
-        $patient = Patient::where('code_patient', $code)->with('user')->first();
+        $patient = Patient::where('patient_code', $code)->with('user')->first();
 
         if (! $patient) {
             return response()->json(['message' => 'Aucun patient trouvé'], 404);

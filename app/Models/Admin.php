@@ -33,6 +33,8 @@ class Admin extends Model
 	protected $casts = [
 		'id' => 'int'
 	];
+	
+	protected $fillable = ['user_id'];
 
 	public function user()
 	{
