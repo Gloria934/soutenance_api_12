@@ -20,9 +20,27 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 });
 
 
+// routes/api.php
+
+
+
+/*Route::middleware(['firebase.auth'])->group(function () {
+    Route::get('/user', function () {
+        return auth()->user();
+    });
+
+    // Routes avec rôles
+    Route::get('/admin', function () {
+        return response()->json(['message' => 'Admin content']);
+    })->middleware('role:admin');
+});*/
+
+
+
+
 //routes qui utilisent les contrôleurs situés dans le dossier auth
 
-Route::prefix('auth')->group(function () {
+/*Route::prefix('auth')->group(function () {
     Route::post('/register', [RegisteredUserController::class, 'store']);
     Route::post('/login', [AuthenticatedSessionController::class, 'store']);
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
@@ -35,7 +53,7 @@ Route::prefix('auth')->group(function () {
         ->middleware('auth:sanctum');
 
     
-});
+});*/
 
 
 
@@ -70,13 +88,13 @@ Route::middleware('auth:sanctum')->prefix('users')->group(function () {
 
 
 
-Route::get('/email/verify/{id}', [EmailVerificationNotificationController::class, 'verify'])
+/*Route::get('/email/verify/{id}', [EmailVerificationNotificationController::class, 'verify'])
     ->name('verification.verify')
-    ->middleware(['signed', 'throttle:6,1']); // La route pour vérifier l'email
+    ->middleware(['signed', 'throttle:6,1']); */// La route pour vérifier l'email
 
 
 
-    Route::prefix('auth')->group(function () {
+   /* Route::prefix('auth')->group(function () {
         Route::middleware(['auth:sanctum'])->group(function () {
             // Envoi du mail de vérification
             Route::post('/email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
@@ -87,7 +105,20 @@ Route::get('/email/verify/{id}', [EmailVerificationNotificationController::class
                 ->middleware(['signed'])
                 ->name('verification.verify');
         });
-    });
+    });*/
+
+
+   /* Route::middleware(['firebase.auth'])->group(function () {
+        Route::get('/me', function () {
+            return auth()->user();
+        });
+    
+        Route::get('/admin', function () {
+            abort_unless(auth()->user()->hasRole('admin'), 403);
+            return 'Bienvenue admin';
+        });
+    });*/
+    
 
 
 

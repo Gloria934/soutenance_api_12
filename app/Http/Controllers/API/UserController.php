@@ -13,8 +13,6 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 
 
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -219,65 +217,6 @@ class UserController extends Controller
     }
 
     
-
-
-    //fonction pour exporter la liste des utilsateurs en fichier excel
-    public function exportExcel()
-    {
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-
-        // En-têtes
-        $sheet->setCellValue('A1', 'ID');
-        $sheet->setCellValue('B1', 'Nom');
-        $sheet->setCellValue('C1', 'Email');
-        $sheet->setCellValue('D1', 'Date de création');
-
-        // Données
-        $users = User::all();
-        $row = 2;
-
-        foreach ($users as $user) {
-            $sheet->setCellValue('A' . $row, $user->id);
-            $sheet->setCellValue('B' . $row, $user->name);
-            $sheet->setCellValue('C' . $row, $user->email);
-            $sheet->setCellValue('D' . $row, $user->created_at->format('d/m/Y H:i'));
-            $row++;
-        }
-
-        // Retourner le fichier en téléchargement
-        $writer = new Xlsx($spreadsheet);
-
-        // Générer un nom de fichier
-        $fileName = 'utilisateurs_' . now()->format('Ymd_His') . '.xlsx';
-
-        // Créer une réponse HTTP avec le fichier
-        return response()->streamDownload(function () use ($writer) {
-            $writer->save('php://output');
-        }, $fileName, [
-            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        ]);
-    }
-
-
-
-    public function exportPdf()
-    {
-        $users = User::all();
-
-        $html = '<h2>Liste des utilisateurs</h2><table border="1" width="100%" cellspacing="0" cellpadding="5"><tr><th>Nom</th><th>Email</th><th>Rôles</th></tr>';
-        
-        foreach ($users as $user) {
-            $roles = implode(', ', $user->getRoleNames()->toArray());
-            $html .= "<tr><td>{$user->name}</td><td>{$user->email}</td><td>{$roles}</td></tr>";
-        }
-
-        $html .= '</table>';
-
-        $pdf = Pdf::loadHTML($html);
-        return $pdf->download('utilisateurs.pdf');
-    }
-
 
     public function me(Request $request)
     {

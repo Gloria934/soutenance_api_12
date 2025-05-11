@@ -77,4 +77,26 @@ class PatientController extends Controller
         return response()->json($ordonnances);
     }
 
+
+    // fonction consulterCodePatient
+    public function getCodePatient(Request $request)
+    {
+        $user = $request->user();
+
+        // Vérifie que l'utilisateur a le rôle 'patient'
+        if (!$user->hasRole('patient')) {
+            return response()->json(['message' => 'Non autorisé.'], 403);
+        }
+
+        // Vérifie que la relation 'patient' existe bien
+        if (!$user->patient) {
+            return response()->json(['message' => 'Profil patient introuvable.'], 404);
+        }
+
+        return response()->json([
+            'code_patient' => $user->patient->patient_code
+        ]);
+    }
+
+
 }

@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('nom');
             $table->string('telephone')->nullable();
             $table->string('email')->unique()->nullable();
-            $table->longtext('profile_illustratif')->nullable();
             $table->float('prix_rdv')->nullable();
             $table->time('heure_ouverture')->nullable();
             $table->time('heure_fermeture')->nullable();

@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Providers;
+
+use Illuminate\Support\ServiceProvider;
+use Kreait\Firebase\Factory;
+use Kreait\Firebase\Auth as FirebaseAuth;
+
+class FirebaseServiceProvider extends ServiceProvider
+{
+    public function register()
+    {
+        // Enregistre le service Firebase Auth dans le container
+        $this->app->singleton(FirebaseAuth::class, function ($app) {
+            return (new Factory)
+                ->withServiceAccount(config('services.firebase.credentials_file'))
+                ->createAuth();
+        });
+    }
+
+    public function boot()
+    {
+        // Rien à faire ici pour Firebase
+    }
+}

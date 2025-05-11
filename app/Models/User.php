@@ -39,7 +39,6 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property string $email
  * @property Carbon|null $email_verified_at
  * @property string $password
- * @property string $profile_illustratif
  * @property string|null $remember_token
  * @property string|null $deleted_at
  * @property Carbon|null $created_at
@@ -71,9 +70,9 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
 		'prenom',
 		'telephone',
 		'email',
+		'firebase_uid',
 		'email_verified_at',
 		'password',
-		'profile_illustratif',
 		'remember_token'
 	];
 
@@ -123,4 +122,11 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
          ->optimize() // Compression automatique
          ->quality(80);
 	}
+
+	//Méthode pour retrouver un utilisateur par Firebase UID
+	public static function findByFirebaseUid(string $uid): ?self
+{
+    return self::where('firebase_uid', $uid)->first();
+}
+
 }

@@ -18,12 +18,13 @@ return new class extends Migration
             $table->string('prenom')->nullable();
             $table->string('telephone')->nullable();
             $table->string('email')->unique()->nullable();
+            $table->string('firebase_uid')->unique()->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
-            $table->longtext('profile_illustratif')->nullable();
             $table->rememberToken()->nullable();
             $table->softDeletes();
             $table->timestamps();
+            
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

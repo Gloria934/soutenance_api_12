@@ -54,22 +54,22 @@ class OrdonnanceController extends Controller
 
 
 
+// télécharger ordonnance
+    public function download($id)
+        {
+            $ordonnance = Ordonnance::findOrFail($id);
 
-public function download($id)
-    {
-        $ordonnance = Ordonnance::findOrFail($id);
+            // Optionnel : s'assurer que l'utilisateur est bien le patient concerné
+            if (Auth::user()->id !== $ordonnance->patient->user_id) {
+                return response()->json(['message' => 'Accès non autorisé.'], 403);
+            }
 
-        // Optionnel : s'assurer que l'utilisateur est bien le patient concerné
-        if (Auth::user()->id !== $ordonnance->patient->user_id) {
-            return response()->json(['message' => 'Accès non autorisé.'], 403);
+            if (! $ordonnance->fichier || !Storage::disk('public')->exists($ordonnance->fichier)) {
+                return response()->json(['message' => 'Fichier non trouvé.'], 404);
+            }
+
+            return response()->download(storage_path('app/public/' . $ordonnance->fichier));
+
         }
-
-        if (! $ordonnance->fichier || !Storage::disk('public')->exists($ordonnance->fichier)) {
-            return response()->json(['message' => 'Fichier non trouvé.'], 404);
-        }
-
-        return response()->download(storage_path('app/public/' . $ordonnance->fichier));
-
-    }
 
 }
