@@ -49,7 +49,7 @@ return [
        
 
         'api' => [
-            'driver' => 'token', // ou 'sanctum' si tu l’utilises
+            'driver' => 'sanctum', 
             'provider' => 'users',
         ],
 ],

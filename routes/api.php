@@ -3,58 +3,39 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+use Illuminate\Support\Facades\Auth;
+
 use App\Http\Controllers\API\PatientController;
 use App\Http\Controllers\API\UserController;
+use App\Http\Controllers\API\ProfileController;
+use App\Http\Controllers\Auth\FirebaseLoginController;
+use App\Http\Controllers\Auth\FirebaseRegisterController;
+use App\Http\Controllers\Auth\FirebaseEmailVerificationNotificationController;
+use App\Http\Controllers\Auth\FirebasePasswordResetLinkController;
+use App\Http\Controllers\Auth\FirebaseVerifyEmailController;
+use App\Http\Controllers\Auth\FirebaseNewPasswordController;
 
 
-use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
-use App\Http\Controllers\Auth\VerifyEmailController;
-use App\Http\Controllers\Auth\EmailVerificationNotificationController;
-use App\Http\Controllers\Auth\PasswordResetLinkController;
-use App\Http\Controllers\Auth\NewPasswordController;
 
+
+
+
+// routes/api.php
+Route::post('/email/verification-notification', [FirebaseEmailVerificationNotificationController::class, 'store'])
+    ->middleware(['auth:sanctum', 'throttle:6,1']);
+
+Route::get('/verify-email/{token}', [FirebaseVerifyEmailController::class, '__invoke'])
+    ->name('verification.verify');
+
+Route::post('/forgot-password', [FirebasePasswordResetLinkController::class, 'store'])
+    ->middleware('guest');
+
+Route::post('/reset-password', [FirebaseNewPasswordController::class, 'store'])
+    ->middleware('guest');
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
-
-
-// routes/api.php
-
-
-
-/*Route::middleware(['firebase.auth'])->group(function () {
-    Route::get('/user', function () {
-        return auth()->user();
-    });
-
-    // Routes avec rôles
-    Route::get('/admin', function () {
-        return response()->json(['message' => 'Admin content']);
-    })->middleware('role:admin');
-});*/
-
-
-
-
-//routes qui utilisent les contrôleurs situés dans le dossier auth
-
-/*Route::prefix('auth')->group(function () {
-    Route::post('/register', [RegisteredUserController::class, 'store']);
-    Route::post('/login', [AuthenticatedSessionController::class, 'store']);
-    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
-
-    Route::post('/forgot-password', [PasswordResetLinkController::class, 'store']);
-    Route::post('/reset-password', [NewPasswordController::class, 'store']);
-
-    Route::get('/verify-email/{id}/{hash}', VerifyEmailController::class)->middleware('signed');
-    Route::post('/email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
-        ->middleware('auth:sanctum');
-
-    
-});*/
-
 
 
 //Routes qui concernent les actions liées à un patient
@@ -86,38 +67,54 @@ Route::middleware('auth:sanctum')->prefix('users')->group(function () {
 });
 
 
+//  Route publique
+Route::post('/login', [FirebaseLoginController::class, 'login']);
 
 
-/*Route::get('/email/verify/{id}', [EmailVerificationNotificationController::class, 'verify'])
-    ->name('verification.verify')
-    ->middleware(['signed', 'throttle:6,1']); */// La route pour vérifier l'email
+Route::post('/register', [FirebaseRegisterController::class, 'register']);
+
+
+//  Routes protégées par authentification
 
 
 
-   /* Route::prefix('auth')->group(function () {
-        Route::middleware(['auth:sanctum'])->group(function () {
-            // Envoi du mail de vérification
-            Route::post('/email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
-                ->middleware('throttle:6,1');
+// Fichier : routes/api.php
+Route::middleware(['firebase.auth'])->group(function () {
+    //Route::get('/me', [ProfileController::class, 'me']);
+    // ... autres routes protégées
+});
+
+
+
+
+Route::middleware('auth:sanctum')->group(function () {
     
-            // Vérification de l’email (lien signé)
-            Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, 'verify'])
-                ->middleware(['signed'])
-                ->name('verification.verify');
-        });
+    // Accessible par tous les utilisateurs connectés
+    //Route::get('/me', fn () => Auth::user());
+
+    // 👤 Routes réservées aux patients
+    /*Route::middleware('role:patient')->group(function () {
+        Route::post('/payer', [PaiementController::class, 'payer']);
+        Route::get('/historique', [PaiementController::class, 'historique']);
     });*/
 
-
-   /* Route::middleware(['firebase.auth'])->group(function () {
-        Route::get('/me', function () {
-            return auth()->user();
-        });
-    
-        Route::get('/admin', function () {
-            abort_unless(auth()->user()->hasRole('admin'), 403);
-            return 'Bienvenue admin';
-        });
+    // 🛡️ Routes réservées aux admins
+   /* Route::middleware('role:admin')->group(function () {
+        Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
+        Route::post('/admin/valider-paiement', [AdminController::class, 'validerPaiement']);
     });*/
+});
+
+
+
+
+
+
+
+   
+
+
+ 
     
 
 

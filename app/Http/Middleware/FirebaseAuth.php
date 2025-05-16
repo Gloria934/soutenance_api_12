@@ -34,33 +34,19 @@ class FirebaseAuth
         try {
             $verifiedIdToken = $this->firebaseAuth->verifyIdToken($idToken);
             $uid = $verifiedIdToken->claims()->get('sub');
-        
-            $firebaseUser = $this->firebaseAuth->getUser($uid);
-            $email = $firebaseUser->email;
-            $phone = $firebaseUser->phoneNumber;
-        
             $user = User::where('firebase_uid', $uid)->first();
-        
+    
+            // ↓ Supprime la création automatique et renvoie une 401 si l'utilisateur n'existe pas
             if (!$user) {
-                $user = User::create([
-                    'firebase_uid' => $uid,
-                    'email' => $email,
-                    'telephone' => $phone,
-                    'email_verified_at' => now(),
-                    'password' => null,
-                ]);
-        
-                $user->assignRole('patient');
+                return response()->json(['message' => 'Utilisateur non enregistré.'], 401);
             }
-        
+    
             Auth::guard('api')->login($user);
-
-        
+            return $next($request);
+    
         } catch (FirebaseException $e) {
-            return response()->json(['message' => 'Erreur Firebase : ' . $e->getMessage()], 401);
+            return response()->json(['message' => 'Token invalide.'], 401);
         }
         
-        
-        return $next($request);
     }
 }
