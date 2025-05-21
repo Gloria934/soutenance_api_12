@@ -28,7 +28,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *
  * @package App\Models
  */
-class OrdonnanceProduit extends Model
+class MedicamentsPrescrits extends Model
 {
 	use SoftDeletes;
 	protected $table = 'ordonnance_produits';

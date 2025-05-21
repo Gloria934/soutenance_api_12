@@ -16,11 +16,14 @@ use App\Http\Controllers\Auth\FirebaseVerifyEmailController;
 use App\Http\Controllers\Auth\FirebaseNewPasswordController;
 
 
+//  Route publique
+Route::post('/login', [FirebaseLoginController::class, 'login']);
+
+Route::post('/register', [FirebaseRegisterController::class, 'register']);
 
 
+//  Routes protégées par authentification
 
-
-// routes/api.php
 Route::post('/email/verification-notification', [FirebaseEmailVerificationNotificationController::class, 'store'])
     ->middleware(['auth:sanctum', 'throttle:6,1']);
 
@@ -33,9 +36,6 @@ Route::post('/forgot-password', [FirebasePasswordResetLinkController::class, 'st
 Route::post('/reset-password', [FirebaseNewPasswordController::class, 'store'])
     ->middleware('guest');
 
-Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
-    return $request->user();
-});
 
 
 //Routes qui concernent les actions liées à un patient
@@ -64,24 +64,6 @@ Route::middleware('auth:sanctum')->prefix('users')->group(function () {
     Route::get('/users/export/pdf', [UserController::class, 'exportPdf']);
 
     Route::get('/me', [UserController::class, 'me']);
-});
-
-
-//  Route publique
-Route::post('/login', [FirebaseLoginController::class, 'login']);
-
-
-Route::post('/register', [FirebaseRegisterController::class, 'register']);
-
-
-//  Routes protégées par authentification
-
-
-
-// Fichier : routes/api.php
-Route::middleware(['firebase.auth'])->group(function () {
-    //Route::get('/me', [ProfileController::class, 'me']);
-    // ... autres routes protégées
 });
 
 

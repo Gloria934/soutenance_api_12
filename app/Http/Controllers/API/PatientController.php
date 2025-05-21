@@ -50,7 +50,7 @@ class PatientController extends Controller
     }
 
 
-    //fonction de recher d'un patient par son code
+    //fonction de recherche d'un patient par son code
     public function findByCode($code)
     {
         $patient = Patient::where('patient_code', $code)->with('user')->first();

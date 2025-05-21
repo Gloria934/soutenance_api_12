@@ -13,7 +13,7 @@ class FirebaseServiceProvider extends ServiceProvider
         // Enregistre le service Firebase Auth dans le container
         $this->app->singleton(FirebaseAuth::class, function ($app) {
             return (new Factory)
-                ->withServiceAccount(config('services.firebase.credentials_file'))
+                ->withServiceAccount(storage_path('firebase/credentials.json'))
                 ->createAuth();
         });
     }
