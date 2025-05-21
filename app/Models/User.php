@@ -28,6 +28,8 @@ use App\Notifications\CustomResetPassword;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use App\Models\Allergy;
+
 
 /**
  * Class User
@@ -53,7 +55,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  */
 class User extends Authenticatable implements MustVerifyEmail, HasMedia
 {
-	use SoftDeletes,HasApiTokens, Notifiable, HasRoles, HasFactory,InteractsWithMedia;
+	use SoftDeletes, HasApiTokens, Notifiable, HasRoles, HasFactory, InteractsWithMedia;
 	protected $table = 'users';
 
 	protected $casts = [
@@ -103,10 +105,14 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
 	{
 		$this->notify(new CustomVerifyEmail());
 	}
+	public function allergies()
+	{
+		return $this->hasMany(Allergy::class);
+	}
 
 
 
-// ...
+	// ...
 
 	public function sendPasswordResetNotification($token)
 	{
@@ -116,17 +122,17 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
 
 	public function registerMediaConversions(?Media $media = null): void
 	{
-    $this->addMediaConversion('thumb')
-         ->width(200)
-         ->height(200)
-         ->optimize() // Compression automatique
-         ->quality(80);
+		$this->addMediaConversion('thumb')
+			->width(200)
+			->height(200)
+			->optimize() // Compression automatique
+			->quality(80);
 	}
 
 	//Méthode pour retrouver un utilisateur par Firebase UID
 	public static function findByFirebaseUid(string $uid): ?self
-{
-    return self::where('firebase_uid', $uid)->first();
-}
+	{
+		return self::where('firebase_uid', $uid)->first();
+	}
 
 }
