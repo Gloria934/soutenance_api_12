@@ -1,0 +1,23 @@
+<?php
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration {
+    public function up(): void
+    {
+        Schema::create('allergies', function (Blueprint $table) {
+            $table->id();
+            $table->string('nom');
+            $table->unsignedBigInteger('patient_id');
+            $table->timestamps();
+
+            $table->foreign('patient_id')->references('id')->on('users')->onDelete('restrict');
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('allergies');
+    }
+};
