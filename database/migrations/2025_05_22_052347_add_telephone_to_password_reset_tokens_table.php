@@ -11,10 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('secretaires', function (Blueprint $table) {
-            $table->foreignId('id')->primary()->constrained('users')->onDelete('cascade');
-            $table->softDeletes();
-            $table->timestamps();
+        Schema::table('password_reset_tokens', function (Blueprint $table) {
+            //
         });
     }
 
@@ -23,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('secretaires');
+        Schema::table('password_reset_tokens', function (Blueprint $table) {
+            //
+        });
     }
 };

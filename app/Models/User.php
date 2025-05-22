@@ -71,8 +71,12 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
 		'nom',
 		'prenom',
 		'telephone',
+		'code_patient',
+		'genre',
+		'date_naissance',
+		'id_personnel',
+		'role_voulu',
 		'email',
-		'firebase_uid',
 		'email_verified_at',
 		'password',
 		'remember_token'
