@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Database\QueryException;
 
 class NewPasswordController extends Controller
 {
@@ -21,33 +22,70 @@ class NewPasswordController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
-        $request->validate([
-            'token' => ['required'],
-            'email' => ['required', 'email'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
-
-        // Here we will attempt to reset the user's password. If it is successful we
-        // will update the password on an actual user model and persist it to the
-        // database. Otherwise we will parse the error and return the response.
-        $status = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
-            function ($user) use ($request) {
-                $user->forceFill([
-                    'password' => Hash::make($request->string('password')),
-                    'remember_token' => Str::random(60),
-                ])->save();
-
-                event(new PasswordReset($user));
-            }
-        );
-
-        if ($status != Password::PASSWORD_RESET) {
-            throw ValidationException::withMessages([
-                'email' => [__($status)],
+        try {
+            // Validate the request
+            $request->validate([
+                'token' => ['required', 'string'],
+                'telephone' => ['required', 'string'],
+                'password' => ['required', 'confirmed', Rules\Password::defaults()],
             ]);
-        }
 
-        return response()->json(['status' => __($status)]);
+            // Explicitly define credentials to avoid including password_confirmation
+            $credentials = [
+                'telephone' => $request->telephone,
+                'password' => $request->password,
+                'token' => $request->token,
+            ];
+
+            // Attempt to reset the user's password
+            $status = Password::reset(
+                $credentials,
+                function ($user) use ($request) {
+                    $user->forceFill([
+                        'password' => Hash::make($request->password),
+                        'remember_token' => Str::random(60),
+                    ])->save();
+
+                    event(new PasswordReset($user));
+                }
+            );
+
+            // Check the reset status
+            if ($status === Password::PASSWORD_RESET) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => __($status),
+                ], 200);
+            }
+
+            // Handle failed reset attempts
+            throw ValidationException::withMessages([
+                'telephone' => [__($status)],
+            ]);
+
+        } catch (ValidationException $e) {
+            // Handle validation errors
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation failed',
+                'errors' => $e->errors(),
+            ], 422);
+
+        } catch (QueryException $e) {
+            // Handle database query errors (e.g., column not found)
+            \Log::error('Password reset database error: ' . $e->getMessage());
+            return response()->json([
+                'status' => 'error',
+                'message' => 'A database error occurred while resetting the password.',
+            ], 500);
+
+        } catch (\Exception $e) {
+            // Handle any other unexpected errors
+            \Log::error('Password reset error: ' . $e->getMessage());
+            return response()->json([
+                'status' => 'error',
+                'message' => 'An unexpected error occurred. Please try again later.',
+            ], 500);
+        }
     }
 }

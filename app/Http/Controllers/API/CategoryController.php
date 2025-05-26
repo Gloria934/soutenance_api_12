@@ -24,7 +24,7 @@ class CategoryController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'nom' => 'required|string|max:255',
-
+            'description' => 'string|nullable',
         ]);
 
         if ($validator->fails()) {
@@ -36,6 +36,8 @@ class CategoryController extends Controller
 
         $category = Category::create([
             'nom' => $request->nom,
+            'description' => $request->description,
+
 
         ]);
 
@@ -75,7 +77,7 @@ class CategoryController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
+            'nom' => 'required|string|max:255',
 
         ]);
 
@@ -87,7 +89,10 @@ class CategoryController extends Controller
         }
 
         $category->update([
-            'name' => $request->name,
+            'nom' => $request->nom,
+            'description' => $request->description,
+
+
 
         ]);
 

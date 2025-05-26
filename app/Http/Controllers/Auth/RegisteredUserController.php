@@ -11,29 +11,33 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
+use Exception;
 
 class RegisteredUserController extends Controller
 {
     /**
      * Handle an incoming registration request.
      *
-     * @throws \Illuminate\Validation\ValidationException
+     * @param Request $request
+     * @return JsonResponse
      */
     public function store(Request $request): JsonResponse
     {
         try {
+            // Validation des données
             $validatedData = $request->validate([
                 'nom' => ['required', 'string', 'max:255'],
                 'prenom' => ['required', 'string', 'max:255'],
                 'telephone' => ['required', 'string', 'max:20'],
-                'genre' => ['required', 'string', 'in:homme,femme,autre'],
-                'date_naissance' => ['nullable', 'date'],
-                'id_personnel' => ['nullable', 'string', 'max:255'],
+                'genre' => ['required', 'string',],
+                'date_naissance' => ['nullable', 'string'],
+                'id_personnel' => ['nullable', 'string'],
                 'role_voulu' => ['nullable', 'integer', 'max:10'],
-                'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+                'email' => ['required', 'string', 'email', 'max:255',],
                 'password' => ['required', 'confirmed', Rules\Password::defaults()],
             ]);
 
+            // Création de l'utilisateur
             $user = User::create([
                 'nom' => $validatedData['nom'],
                 'prenom' => $validatedData['prenom'],
@@ -46,21 +50,42 @@ class RegisteredUserController extends Controller
                 'password' => Hash::make($validatedData['password']),
             ]);
 
+            // Déclenchement de l'événement Registered
             event(new Registered($user));
+
+            // Connexion de l'utilisateur
             Auth::login($user);
+
+            // Génération du token
             $token = $user->createToken('auth_token')->plainTextToken;
 
+            // Réponse réussie
             return response()->json([
                 'message' => 'Utilisateur créé avec succès',
                 'user' => $user,
                 'token' => $token,
             ], 201);
 
-        } catch (ValidationException $e) {
+        }
+        // catch (ValidationException $e) {
+        //     // Erreurs de validation
+        //     return response()->json([
+        //         'message' => 'Erreur de validation',
+        //         'errors' => $e->errors(),
+        //     ], 422);
+        // }
+        catch (Exception $e) {
+            // Autres erreurs (ex. base de données, serveur, etc.)
+            \Log::error('Erreur lors de l\'inscription: ' . $e->getMessage(), [
+                'exception' => $e,
+                'request' => $request->all(),
+            ]);
+
             return response()->json([
-                'message' => 'Erreur de validation',
-                'errors' => $e->errors(),
-            ], 422);
+                'message' => 'Une erreur est survenue lors de l\'inscription',
+                'error' => $e->getMessage(),
+                'code' => $e->getCode(),
+            ], 500);
         }
     }
 }

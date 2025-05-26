@@ -30,7 +30,8 @@ class Category extends Model
 	protected $table = 'categories';
 
 	protected $fillable = [
-		'nom'
+		'nom',
+		'description'
 	];
 
 

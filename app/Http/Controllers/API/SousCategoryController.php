@@ -41,7 +41,7 @@ class SousCategoryController extends Controller
         }
 
         $sous_category = SousCategory::create([
-            'categorie_id' => $request->category_id,
+            'categorie_id' => $request->categorie_id,
             'nom' => $request->nom,
 
         ]);
