@@ -46,4 +46,9 @@ class SousCategory extends Model
 		return $this->belongsTo(Category::class, 'categorie_id');
 	}
 
+	public function pharmaceutical_products()
+	{
+		return $this->hasMany(PharmaceuticalProduct::class, 'sous_categorie_id');
+	}
+
 }

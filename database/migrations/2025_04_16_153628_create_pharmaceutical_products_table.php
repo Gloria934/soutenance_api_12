@@ -16,34 +16,26 @@ return new class extends Migration {
     {
         Schema::create('pharmaceutical_products', function (Blueprint $table) {
             $table->id();
+            $table->string('image_path');
             $table->string('nom_produit');
-            $table->float('dosage');
-            $table->string('unite_mesure')
-                ->comment('Unité de mesure du dosage: ' . implode(', ', UniteMesureEnum::values()));
-            $table->string('code');
-            $table->string('nom_laboratoire')->nullable();
-            $table->longtext('image_produit')->nullable();
+            $table->string('dosage');
             $table->float('prix');
-            $table->text('description');
-            $table->date('date_expiration');
+            $table->integer('stock');
+            $table->text('description')->nullable();
+            $table->date('date_expiration')->nullable();
+            $table->foreignId('dci_id')->constrained('dcis')->onUpdate('cascade');
+            $table->foreignId('classe_id')->constrained('classes')->onUpdate('cascade');
+            $table->foreignId('categorie_id')->constrained('categories')->onUpdate('cascade');
+            $table->foreignId('sous_categorie_id')->constrained('sous_categories')->onUpdate('cascade');
+            $table->foreignId('forme_id')->constrained('formes')->onUpdate('cascade');
             $table->softDeletes();
             $table->timestamps();
 
-            $table->foreignId('stock_id')->constrained('stocks')->onDelete('restrict');
-            // clé étrangère en lien avec le secrétariat médical
-
-
-            $table->foreignId('dci_id')->constrained('dcis')->onUpdate('cascade');
-            $table->foreignId('forme_id')->constrained('formes')->onUpdate('cascade');
 
 
         });
 
-        DB::statement(
-            "ALTER TABLE pharmaceutical_products 
-             ADD CONSTRAINT unite_check 
-             CHECK (unite_mesure IN ('" . implode("','", UniteMesureEnum::values()) . "'))"
-        );
+
 
 
 

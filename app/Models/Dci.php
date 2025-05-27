@@ -32,4 +32,11 @@ class Dci extends Model
 		'nom'
 	];
 
+
+	public function pharmaceutical_products()
+	{
+		return $this->hasMany(PharmaceuticalProduct::class, 'dci_id');
+	}
+
+
 }
