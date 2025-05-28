@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             DciSeeder::class,
             ClasseMedicamentSeeder::class,
             FormeSeeder::class,
+            ServiceSeeder::class,
         ]);
     }
 }
