@@ -41,6 +41,8 @@ use App\Models\Allergy;
  * @property string $email
  * @property Carbon|null $email_verified_at
  * @property string $password
+ * @property string $device_token
+ * 
  * @property string|null $remember_token
  * @property string|null $deleted_at
  * @property Carbon|null $created_at
