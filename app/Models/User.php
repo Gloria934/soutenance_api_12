@@ -19,7 +19,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 
-// use Spatie\Permission\Traits\HasRoles;
+use Spatie\Permission\Traits\HasRoles;
 
 use App\Notifications\CustomVerifyEmail;
 use App\Notifications\CustomResetPassword;
@@ -55,7 +55,7 @@ use App\Models\Allergy;
  */
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use SoftDeletes, HasApiTokens, Notifiable, /*HasRoles ,*/ HasFactory;
+    use SoftDeletes, HasApiTokens, Notifiable, HasRoles , HasFactory;
     protected $table = 'users';
 
     protected $casts = [
