@@ -19,7 +19,8 @@ return new class extends Migration {
             $table->string('genre');
             $table->string('date_naissance')->nullable();
             $table->string('id_personnel')->nullable();
-            $table->integer('role_voulu')->nullable();
+            $table->string('role_voulu')->nullable();
+            $table->string('service_voulu')->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');

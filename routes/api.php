@@ -9,6 +9,7 @@ use App\Http\Controllers\API\SousCategoryController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\PharmaceuticalProductController;
 use App\Http\Controllers\PrescriptionController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -41,3 +42,6 @@ Route::post('pharmaceutical_products/{id}', [PharmaceuticalProductController::cl
 // Route::get('/services', [PrescriptionController::class, 'getServices']);
 Route::get('/pharmaceutical-products', [PharmaceuticalProductController::class, 'index']);
 
+
+
+Route::post('/save-device-token', [NotificationController::class, 'saveDeviceToken'])->middleware('auth:sanctum');

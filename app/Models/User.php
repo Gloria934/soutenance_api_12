@@ -42,7 +42,6 @@ use App\Models\Allergy;
  * @property Carbon|null $email_verified_at
  * @property string $password
  * @property string $device_token
- * 
  * @property string|null $remember_token
  * @property string|null $deleted_at
  * @property Carbon|null $created_at
@@ -77,9 +76,12 @@ class User extends Authenticatable implements MustVerifyEmail
         'date_naissance',
         'id_personnel',
         'role_voulu',
+        'service_voulu',
+
         'email',
         'email_verified_at',
         'password',
+        'device_token',
         'remember_token'
     ];
 
