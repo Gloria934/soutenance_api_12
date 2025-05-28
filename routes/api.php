@@ -27,6 +27,7 @@ Route::apiResource('classes', ClasseController::class);
 Route::apiResource('formes', FormeController::class);
 Route::apiResource('allergies', AllergyController::class);
 Route::apiResource('services', ServiceController::class);
+Route::post('services/{id}/restore', [ServiceController::class, 'restore']);
 Route::post('verify_user_number', [AuthenticatedSessionController::class, 'verifyUserNumber']);
 Route::apiResource('pharmaceutical_products', PharmaceuticalProductController::class);
 Route::post('pharmaceutical_products/{id}', [PharmaceuticalProductController::class, 'update']);
