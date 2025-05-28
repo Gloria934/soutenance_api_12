@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\PharmaceuticalProductController;
 use App\Http\Controllers\PrescriptionController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ServiceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,6 +26,7 @@ Route::apiResource('dcis', DciController::class);
 Route::apiResource('classes', ClasseController::class);
 Route::apiResource('formes', FormeController::class);
 Route::apiResource('allergies', AllergyController::class);
+Route::apiResource('services', ServiceController::class);
 Route::post('verify_user_number', [AuthenticatedSessionController::class, 'verifyUserNumber']);
 Route::apiResource('pharmaceutical_products', PharmaceuticalProductController::class);
 Route::post('pharmaceutical_products/{id}', [PharmaceuticalProductController::class, 'update']);
@@ -43,5 +45,5 @@ Route::post('pharmaceutical_products/{id}', [PharmaceuticalProductController::cl
 Route::get('/pharmaceutical-products', [PharmaceuticalProductController::class, 'index']);
 
 
-
+// en cours : Pour les notifications
 Route::post('/save-device-token', [NotificationController::class, 'saveDeviceToken'])->middleware('auth:sanctum');
