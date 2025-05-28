@@ -30,14 +30,14 @@ Route::post('pharmaceutical_products/{id}', [PharmaceuticalProductController::cl
 
 // Non traité
 
-Route::get('/prescriptions', [PrescriptionController::class, 'index']);
-Route::delete('/prescriptions/{id}', [PrescriptionController::class, 'destroy']);
-Route::delete('/prescriptions/paid', [PrescriptionController::class, 'deletePaid']);
-Route::put('/prescriptions/{id}/medicaments/{medicamentId}', [PrescriptionController::class, 'updateMedicament']);
+// Route::get('/prescriptions', [PrescriptionController::class, 'index']);
+// Route::delete('/prescriptions/{id}', [PrescriptionController::class, 'destroy']);
+// Route::delete('/prescriptions/paid', [PrescriptionController::class, 'deletePaid']);
+// Route::put('/prescriptions/{id}/medicaments/{medicamentId}', [PrescriptionController::class, 'updateMedicament']);
 
 // Non traité
-Route::post('/prescriptions', [PrescriptionController::class, 'store']);
-Route::get('/patients', [PrescriptionController::class, 'getPatients']);
-Route::get('/services', [PrescriptionController::class, 'getServices']);
+// Route::post('/prescriptions', [PrescriptionController::class, 'store']);
+// Route::get('/patients', [PrescriptionController::class, 'getPatients']);
+// Route::get('/services', [PrescriptionController::class, 'getServices']);
 Route::get('/pharmaceutical-products', [PharmaceuticalProductController::class, 'index']);
 

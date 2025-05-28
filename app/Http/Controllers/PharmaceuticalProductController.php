@@ -13,36 +13,43 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 
 class PharmaceuticalProductController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(): JsonResponse
     {
         try {
-            $query = PharmaceuticalProduit::with(['dci', 'classe', 'categorie', 'sousCategorie', 'forme']);
+            // Fetch all medicaments from the database
+            $medicaments = PharmaceuticalProduct::all()->map(function ($medicament) {
+                return [
+                    'id' => (string) $medicament->id, // Cast to string for consistency
+                    'nom_produit' => $medicament->nom_produit,
+                    'image_path' => $medicament->image_path ?? '', // Handle null
+                    'dosage' => $medicament->dosage,
+                    'prix' => (float) $medicament->prix, // Ensure float
+                    'stock' => (int) $medicament->stock, // Ensure integer
+                    'description' => $medicament->description,
+                    'date_expiration' => $medicament->date_expiration,
+                    'dci_id' => (string) $medicament->dci_id, // Cast to string
+                    'classe_id' => (string) $medicament->classe_id, // Cast to string
+                    'categorie_id' => (string) $medicament->categorie_id, // Cast to string
+                    'sous_categorie_id' => (string) $medicament->sous_categorie_id, // Cast to string
+                    'forme_id' => (string) $medicament->forme_id, // Cast to string
+                ];
+            });
 
-            if ($request->has('search')) {
-                $search = $request->input('search');
-                $query->where(function ($q) use ($search) {
-                    $q->where('nom_produit', 'like', "%$search%")
-                        ->orWhereHas('dci', function ($q) use ($search) {
-                            $q->where('nom', 'like', "%$search%");
-                        });
-                });
-            }
-
-            $products = $query->get();
+            // Return JSON response
             return response()->json([
-                'success' => true,
-                'pharmaceutical_products' => $products,
+                'medicaments' => $medicaments
             ], 200);
         } catch (\Exception $e) {
+            // Handle errors
             return response()->json([
-                'success' => false,
-                'message' => 'Erreur lors de la récupération des produits: ' . $e->getMessage(),
+                'message' => 'Erreur lors de la récupération des médicaments: ' . $e->getMessage()
             ], 500);
         }
     }
