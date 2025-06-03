@@ -7,12 +7,16 @@ use App\Http\Controllers\API\DciController;
 use App\Http\Controllers\API\FormeController;
 use App\Http\Controllers\API\SousCategoryController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\DeviceTokenController;
 use App\Http\Controllers\PharmaceuticalProductController;
 use App\Http\Controllers\PrescriptionController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ServiceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Kreait\Firebase\Factory;
+
 
 require __DIR__ . '/auth.php';
 
@@ -48,3 +52,37 @@ Route::get('/pharmaceutical-products', [PharmaceuticalProductController::class, 
 
 // en cours : Pour les notifications
 Route::post('/save-device-token', [NotificationController::class, 'saveDeviceToken'])->middleware('auth:sanctum');
+
+
+
+Route::get('/test-firebase', function () {
+    try {
+        $credentials = config('firebase.projects.default.credentials.file');
+        if (!$credentials) {
+            throw new \Exception('Firebase credentials not configured in config/firebase.php');
+        }
+
+        $credentialsPath = base_path($credentials);
+        if (!file_exists($credentialsPath)) {
+            throw new \Exception('Firebase credentials file does not exist at: ' . $credentialsPath);
+        }
+
+        if (!is_readable($credentialsPath)) {
+            throw new \Exception('Firebase credentials file is not readable at: ' . $credentialsPath);
+        }
+
+        $firebase = (new Factory)
+            ->withServiceAccount($credentialsPath)
+            ->createAuth();
+
+        return response()->json(['message' => 'Firebase initialized successfully']);
+    } catch (\Exception $e) {
+        \Log::error('Firebase initialization failed: ' . $e->getMessage());
+        return response()->json([
+            'error' => 'Failed to initialize Firebase: ' . $e->getMessage(),
+        ], 500);
+    }
+});
+
+// Route::get('count', [RegisteredUserController::class, 'countAdmin']);
+Route::post('update-device-token', [DeviceTokenController::class, 'updateDeviceToken']);

@@ -16,15 +16,14 @@ return new class extends Migration {
             $table->string('prenom');
             $table->string('telephone', 20)->unique(); // Ajout de la contrainte unique
             $table->string('code_patient', 40)->nullable();
-            $table->string('genre');
+            $table->string('genre')->nullable();
             $table->string('date_naissance')->nullable();
-            $table->string('id_personnel')->nullable();
+            $table->string('npi')->nullable();
             $table->string('role_voulu')->nullable();
             $table->string('service_voulu')->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            
             $table->rememberToken();
             $table->softDeletes();
             $table->timestamps();

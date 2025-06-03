@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Kreait\Laravel\Firebase\Facades\Firebase;
 
 class CategoryController extends Controller
 {

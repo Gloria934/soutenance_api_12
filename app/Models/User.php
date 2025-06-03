@@ -55,7 +55,7 @@ use App\Models\Allergy;
  */
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use SoftDeletes, HasApiTokens, Notifiable, HasRoles , HasFactory;
+    use SoftDeletes, HasApiTokens, Notifiable, HasRoles, HasFactory;
     protected $table = 'users';
 
     protected $casts = [
@@ -74,10 +74,9 @@ class User extends Authenticatable implements MustVerifyEmail
         'code_patient',
         'genre',
         'date_naissance',
-        'id_personnel',
+        'npi',
         'role_voulu',
         'service_voulu',
-
         'email',
         'email_verified_at',
         'password',

@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
             ClasseMedicamentSeeder::class,
             FormeSeeder::class,
             ServiceSeeder::class,
-            RolesSeeder::class,        
+            RolesSeeder::class,
         ]);
     }
 }

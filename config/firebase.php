@@ -18,6 +18,12 @@ return [
      */
 
     'projects' => [
+        'default' => [
+            'credentials' => [
+                'file' => env('FIREBASE_CREDENTIALS'),
+            ],
+
+        ],
         'app' => [
 
             /*
@@ -50,8 +56,11 @@ return [
              *
              */
 
-            'credentials' => env('FIREBASE_CREDENTIALS', env('GOOGLE_APPLICATION_CREDENTIALS')),
-
+            // 'credentials' => env('FIREBASE_CREDENTIALS', env('GOOGLE_APPLICATION_CREDENTIALS'), ),
+            // 'credentials' => env('FIREBASE_CREDENTIALS', storage_path('app/projetfirebasetest-28637-firebase-adminsdk-fbsvc-8a8af03526.json')),
+            // 'credentials' => [
+            //     'file' => env('FIREBASE_CREDENTIALS', env('GOOGLE_APPLICATION_CREDENTIALS'), ),
+            // ],
             /*
              * ------------------------------------------------------------------------
              * Firebase Auth Component
