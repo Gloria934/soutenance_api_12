@@ -16,6 +16,7 @@ use Spatie\Permission\Models\Role;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
+use App\Models\SimpleNotification;
 
 class RegisteredUserController extends Controller
 {
@@ -69,6 +70,13 @@ class RegisteredUserController extends Controller
                 'email' => $validatedData['email'],
                 'device_token' => $validatedData['device_token'] ?? null,
                 'password' => Hash::make($validatedData['password']),
+            ]);
+
+            // Créer une notification pour l'administrateur
+            SimpleNotification::create([
+                'personnel_sante_id' => $user->id,
+                'type' => 'personnel_registration',
+                'status' => 'pending',
             ]);
 
             // Assignation du rôle

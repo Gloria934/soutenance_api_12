@@ -9,14 +9,16 @@ use App\Http\Controllers\API\SousCategoryController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\DeviceTokenController;
+use App\Http\Controllers\PersonnelController;
 use App\Http\Controllers\PharmaceuticalProductController;
 use App\Http\Controllers\PrescriptionController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\SimpleNotificationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Kreait\Firebase\Factory;
-
 
 require __DIR__ . '/auth.php';
 
@@ -74,7 +76,6 @@ Route::get('/test-firebase', function () {
         $firebase = (new Factory)
             ->withServiceAccount($credentialsPath)
             ->createAuth();
-
         return response()->json(['message' => 'Firebase initialized successfully']);
     } catch (\Exception $e) {
         \Log::error('Firebase initialization failed: ' . $e->getMessage());
@@ -86,3 +87,11 @@ Route::get('/test-firebase', function () {
 
 // Route::get('count', [RegisteredUserController::class, 'countAdmin']);
 Route::post('update-device-token', [DeviceTokenController::class, 'updateDeviceToken']);
+Route::apiResource('roles', RoleController::class);
+Route::apiResource('personnels', PersonnelController::class);
+Route::post('/personnels/{id}/role', [PersonnelController::class, 'updateRole']);
+
+Route::get('/notifications', [SimpleNotificationController::class, 'index']);
+Route::post('/notifications/{id}/accept', [SimpleNotificationController::class, 'accept']);
+Route::post('/notifications/{id}/reject', [SimpleNotificationController::class, 'reject']);
+Route::delete('/notifications/{id}', [SimpleNotificationController::class, 'destroy']);
