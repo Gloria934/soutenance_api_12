@@ -12,7 +12,7 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $roles = Role::withTrashed()->get();
+        $roles = Role::all();
 
         return response()->json([
             'success' => true,

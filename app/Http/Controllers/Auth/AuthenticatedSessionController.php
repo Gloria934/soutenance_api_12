@@ -41,7 +41,8 @@ class AuthenticatedSessionController extends Controller
                 'data' => [
                     'user' => $user,
                     'token' => $token,
-                ]
+                ],
+                'role' => $user->getRoleNames()->first()
             ], 200);
         } catch (ValidationException $e) {
             return response()->json([

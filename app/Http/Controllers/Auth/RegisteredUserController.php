@@ -72,12 +72,16 @@ class RegisteredUserController extends Controller
                 'password' => Hash::make($validatedData['password']),
             ]);
 
-            // Créer une notification pour l'administrateur
-            SimpleNotification::create([
-                'personnel_sante_id' => $user->id,
-                'type' => 'personnel_registration',
-                'status' => 'pending',
-            ]);
+            if ($user->role_voulu != null) {
+                // Créer une notification pour l'administrateur
+                SimpleNotification::create([
+                    'personnel_sante_id' => $user->id,
+                    'type' => 'personnel_registration',
+                    'status' => 'pending',
+                ]);
+            }
+
+
 
             // Assignation du rôle
 
@@ -85,9 +89,10 @@ class RegisteredUserController extends Controller
             //     // Temporarily assign a pending role or no role until admin approval
             //     $user->assignRole('pending_personnel');
             // }
+
             if (!User::role('admin')->exists()) {
                 $user->assignRole('admin');
-            } elseif ($user->service_voulu == null) {
+            } elseif ($user->role_voulu == null) {
                 $user->assignRole('patient');
             } else {
                 $user->assignRole('pending'); // Rôle temporaire jusqu'à approbation
@@ -195,5 +200,13 @@ class RegisteredUserController extends Controller
                 'admins' => $admin,
             ]
         );
+    }
+
+    public function checkRole($id)
+    {
+        $user = User::findOrFail($id);
+        return response()->json([
+            'role' => $user->getRoleNames()->first(),
+        ], 200);
     }
 }

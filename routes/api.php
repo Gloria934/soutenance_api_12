@@ -95,3 +95,5 @@ Route::get('/notifications', [SimpleNotificationController::class, 'index']);
 Route::post('/notifications/{id}/accept', [SimpleNotificationController::class, 'accept']);
 Route::post('/notifications/{id}/reject', [SimpleNotificationController::class, 'reject']);
 Route::delete('/notifications/{id}', [SimpleNotificationController::class, 'destroy']);
+
+Route::post('/user/{id}', [RegisteredUserController::class, 'checkRole'], );
