@@ -9,6 +9,7 @@ use App\Http\Controllers\API\SousCategoryController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\DeviceTokenController;
+use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PersonnelController;
 use App\Http\Controllers\PharmaceuticalProductController;
 use App\Http\Controllers\PrescriptionController;
@@ -97,3 +98,6 @@ Route::post('/notifications/{id}/reject', [SimpleNotificationController::class, 
 Route::delete('/notifications/{id}', [SimpleNotificationController::class, 'destroy']);
 
 Route::post('/user/{id}', [RegisteredUserController::class, 'checkRole'], );
+Route::get('/fetch-all-personnels', [PersonnelController::class, 'fetchAllPersonnel']);
+Route::post('/scan', [PersonnelController::class, 'scanUser'], );
+Route::apiResource('/patients', PatientController::class);

@@ -16,12 +16,13 @@ return new class extends Migration {
     {
         Schema::create('rendez_vous', function (Blueprint $table) {
             $table->id();
-            $table->date('date_rdv');
+            $table->date('date_rdv')->nullable();
             $table->string('statut')
                 ->default(StatutEnum::ENCOURS->value)
                 ->comment('Statut du rendez-vous: ' . implode(', ', StatutEnum::values()));
             $table->softDeletes();
             $table->timestamps();
+            $table->foreignId('patient_id')->constrained('users')->onDelete('cascade')->onUpdate('cascade');
 
             $table->foreignId('service_id')->constrained('services')->onDelete('cascade')->onUpdate('cascade');
         });

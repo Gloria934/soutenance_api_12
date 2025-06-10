@@ -26,7 +26,8 @@ class SimpleNotificationController extends Controller
 
         // Assigner le rôle demandé
         if ($user->role_voulu) {
-            $user->assignRole([$user->role_voulu]);
+            // $user->roles()->detash();
+            $user->syncRoles([$user->role_voulu]);
             $user->save();
         }
 
