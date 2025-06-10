@@ -4,7 +4,7 @@ namespace App\Enums;
 
 enum StatutEnum: string
 {
-    case ENCOURS = 'en-cours';
+    case ENATTENTE = 'en-attente';
     case ANNULE = 'annule';
     case TERMINE = 'termine';
 
@@ -12,7 +12,7 @@ enum StatutEnum: string
     public function label(): string
     {
         return match($this) {
-            self::ENCOURS => 'En cours',
+            self::ENATTENTE => 'En attente',
             self::ANNULE => 'Annulé',
             self::TERMINE => 'Terminé',
         };

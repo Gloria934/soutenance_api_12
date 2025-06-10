@@ -16,9 +16,12 @@ return new class extends Migration {
     {
         Schema::create('rendez_vous', function (Blueprint $table) {
             $table->id();
+            $table->string('nom_visiteur')->nullable();
+            $table->string('prenom_visiteur')->nullable();
+            $table->string('numero_visiteur')->nullable();
             $table->date('date_rdv')->nullable();
             $table->string('statut')
-                ->default(StatutEnum::ENCOURS->value)
+                ->default(StatutEnum::ENATTENTE->value)
                 ->comment('Statut du rendez-vous: ' . implode(', ', StatutEnum::values()));
             $table->softDeletes();
             $table->timestamps();

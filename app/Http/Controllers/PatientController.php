@@ -12,7 +12,7 @@ class PatientController extends Controller
      */
     public function index()
     {
-        $patients = User::whereNotNull('role_voulu')->get();
+        $patients = User::role('patient')->get();
         if ($patients != null) {
             return response()->json([
                 'patients' => $patients,

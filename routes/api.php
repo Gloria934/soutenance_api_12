@@ -14,6 +14,7 @@ use App\Http\Controllers\PersonnelController;
 use App\Http\Controllers\PharmaceuticalProductController;
 use App\Http\Controllers\PrescriptionController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\RendezVousController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SimpleNotificationController;
@@ -101,3 +102,5 @@ Route::post('/user/{id}', [RegisteredUserController::class, 'checkRole'], );
 Route::get('/fetch-all-personnels', [PersonnelController::class, 'fetchAllPersonnel']);
 Route::post('/scan', [PersonnelController::class, 'scanUser'], );
 Route::apiResource('/patients', PatientController::class);
+
+Route::apiResource('rendez-vous',RendezVousController::class);
