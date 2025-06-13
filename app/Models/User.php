@@ -31,6 +31,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use App\Models\Allergy;
 
 
+
 /**
  * Class User
  * 
@@ -122,6 +123,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function notifications()
     {
         return $this->hasMany(Notification::class, 'personnel_sante_id');
+    }
+
+    public function rendezvous()
+    {
+        return $this->hasMany(RendezVous::class);
     }
 
 }

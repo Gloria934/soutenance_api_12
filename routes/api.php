@@ -103,4 +103,6 @@ Route::get('/fetch-all-personnels', [PersonnelController::class, 'fetchAllPerson
 Route::post('/scan', [PersonnelController::class, 'scanUser'], );
 Route::apiResource('/patients', PatientController::class);
 
-Route::apiResource('rendez-vous',RendezVousController::class);
+Route::apiResource('rendez-vous', RendezVousController::class);
+
+Route::get('/rendez-vous-a-valider', [RendezVousController::class, 'rendezVousAValider'])->middleware(['auth:api']);

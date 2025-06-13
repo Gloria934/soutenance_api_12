@@ -48,13 +48,17 @@ class RendezVous extends Model
         'service_id'
     ];
 
-    // public function service()
-    // {
-    // 	return $this->belongsTo(Service::class);
-    // }
 
-    // public function secretaire()
-    // {
-    // 	return $this->belongsTo(Secretaire::class);
-    // }
+
+
+    public function service()
+    {
+        return $this->belongsTo(Service::class);
+    }
+
+    public function patient()
+    {
+        return $this->belongsTo(User::class);
+    }
+
 }

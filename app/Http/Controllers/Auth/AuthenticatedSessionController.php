@@ -99,31 +99,23 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): JsonResponse
     {
-        try {
-            $user = Auth::guard('sanctum')->user();
+        // Vérifie que l'utilisateur est authentifié via le guard 'api'
+        if (Auth::guard('api')->check()) {
+            // Récupère l'utilisateur authentifié
+            $user = Auth::guard('api')->user();
 
-            if (!$user) {
-                return response()->json([
-                    'success' => false,
-                    'error' => 'unauthenticated',
-                    'message' => 'Non authentifié',
-                ], 401);
-            }
+            // Révoque le token actuel (si vous utilisez Sanctum)
+            $user->currentAccessToken()->delete();
 
-            $user->tokens()->delete();
-            Auth::guard('sanctum')->logout();
-
+            // Retourne une réponse JSON
             return response()->json([
-                'success' => true,
-                'message' => 'Déconnexion réussie',
+                'message' => 'Successfully logged out'
             ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'error' => 'server_error',
-                'message' => 'Une erreur est survenue lors de la déconnexion',
-                'details' => $e->getMessage(),
-            ], 500);
         }
+
+        // Si aucun utilisateur n'est authentifié
+        return response()->json([
+            'message' => 'Unauthenticated'
+        ], 401);
     }
 }

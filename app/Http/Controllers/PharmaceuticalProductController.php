@@ -57,6 +57,64 @@ class PharmaceuticalProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+    // public function store(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+    //         'nom_produit' => 'required|string|max:255',
+    //         'dosage' => 'required|string|max:50',
+    //         'prix' => 'required|numeric|min:0',
+    //         'stock' => 'required|integer|min:0',
+    //         'description' => 'nullable|string',
+    //         'date_expiration' => 'nullable|date|after:today',
+    //         'dci_id' => 'required|exists:dcis,id',
+    //         'classe_id' => 'required|exists:classes,id',
+    //         'categorie_id' => 'required|exists:categories,id',
+    //         'sous_categorie_id' => 'required|exists:sous_categories,id',
+    //         'forme_id' => 'required|exists:formes,id',
+    //     ]);
+
+    //     if ($validator->fails()) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'errors' => $validator->errors(),
+    //         ], 422);
+    //     }
+
+    //     try {
+    //         // Handle image upload
+    //         $image = $request->file('image');
+    //         $imageName = time() . '_' . $image->getClientOriginalName();
+    //         $imagePath = $image->storeAs('public/products', $imageName);
+    //         $relativePath = 'storage/products/' . $imageName;
+
+    //         $product = PharmaceuticalProduct::create([
+    //             'image_path' => $relativePath,
+    //             'nom_produit' => $request->nom_produit,
+    //             'dosage' => $request->dosage,
+    //             'prix' => $request->prix,
+    //             'stock' => $request->stock,
+    //             'description' => $request->description,
+    //             'date_expiration' => $request->date_expiration ? Carbon::parse($request->date_expiration) : null,
+    //             'dci_id' => $request->dci_id,
+    //             'classe_id' => $request->classe_id,
+    //             'categorie_id' => $request->categorie_id,
+    //             'sous_categorie_id' => $request->sous_categorie_id,
+    //             'forme_id' => $request->forme_id,
+    //         ]);
+
+    //         return response()->json([
+    //             'success' => true,
+    //             'message' => 'Produit créé avec succès',
+    //             'pharmaceutical_product' => $product->load(['dci', 'classe', 'category', 'sousCategory', 'forme',]),
+    //         ], 201);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Erreur lors de la création du produit: ' . $e->getMessage(),
+    //         ], 500);
+    //     }
+    // }
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -82,11 +140,27 @@ class PharmaceuticalProductController extends Controller
         }
 
         try {
+            // Vérifiez si le fichier est reçu
+            if (!$request->hasFile('image') || !$request->file('image')->isValid()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Aucun fichier image valide reçu.',
+                ], 422);
+            }
+
             // Handle image upload
             $image = $request->file('image');
-            $imageName = time() . '_' . $image->getClientOriginalName();
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
             $imagePath = $image->storeAs('public/products', $imageName);
             $relativePath = 'storage/products/' . $imageName;
+
+            // Vérifiez si le fichier a été enregistré
+            if (!file_exists(storage_path('app/' . $imagePath))) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Erreur : l\'image n\'a pas été enregistrée dans ' . $imagePath,
+                ], 500);
+            }
 
             $product = PharmaceuticalProduct::create([
                 'image_path' => $relativePath,
@@ -106,7 +180,7 @@ class PharmaceuticalProductController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Produit créé avec succès',
-                'pharmaceutical_product' => $product->load(['dci', 'classe', 'category', 'sousCategory', 'forme',]),
+                'pharmaceutical_product' => $product->load(['dci', 'classe', 'category', 'sousCategory', 'forme']),
             ], 201);
         } catch (\Exception $e) {
             return response()->json([
@@ -115,7 +189,6 @@ class PharmaceuticalProductController extends Controller
             ], 500);
         }
     }
-
     /**
      * Display the specified resource.
      */

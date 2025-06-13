@@ -20,4 +20,12 @@ class Service extends Model
         'duree_moy_rdv',
         'sous_rdv',
     ];
+
+
+    public function rendezvous()
+    {
+        return $this->hasMany(RendezVous::class);
+    }
+
+
 }
