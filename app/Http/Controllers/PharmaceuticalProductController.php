@@ -151,14 +151,15 @@ class PharmaceuticalProductController extends Controller
             // Handle image upload
             $image = $request->file('image');
             $imageName = time() . '.' . $image->getClientOriginalExtension();
-            $imagePath = $image->storeAs('public/products', $imageName);
-            $relativePath = 'storage/products/' . $imageName;
+            // Enregistrer directement dans le dossier public/storage/products
+            $imagePath = $image->storeAs('products', $imageName, 'public');
+            $relativePath = 'storage/' . $imagePath;
 
             // Vérifiez si le fichier a été enregistré
-            if (!file_exists(storage_path('app/' . $imagePath))) {
+            if (!file_exists(public_path($relativePath))) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Erreur : l\'image n\'a pas été enregistrée dans ' . $imagePath,
+                    'message' => 'Erreur : l\'image n\'a pas été enregistrée dans ' . $relativePath,
                 ], 500);
             }
 
