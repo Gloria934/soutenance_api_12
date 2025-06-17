@@ -218,7 +218,7 @@ class PharmaceuticalProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update($id, Request $request)
     {
         $validated = $request->validate([
             'nom_produit' => 'required|string|max:255',
@@ -244,6 +244,8 @@ class PharmaceuticalProductController extends Controller
             $path = $request->file('image')->store('products', 'public');
             $validated['image_path'] = $path;
         }
+
+        // $product->nom_produit = $request->nom_produit;
 
         $product->update($validated);
 

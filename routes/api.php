@@ -9,9 +9,11 @@ use App\Http\Controllers\API\SousCategoryController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\DeviceTokenController;
+use App\Http\Controllers\OrdonnanceController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PersonnelController;
 use App\Http\Controllers\PharmaceuticalProductController;
+use App\Http\Controllers\PharmacyController;
 use App\Http\Controllers\PrescriptionController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RendezVousController;
@@ -39,6 +41,7 @@ Route::post('services/{id}/restore', [ServiceController::class, 'restore']);
 Route::post('verify_user_number', [AuthenticatedSessionController::class, 'verifyUserNumber']);
 Route::apiResource('pharmaceutical_products', PharmaceuticalProductController::class);
 Route::put('pharmaceutical_products/{id}', [PharmaceuticalProductController::class, 'update']);
+Route::put('ordonnance/{code_patient}', [PharmacyController::class, 'getOrdonnance']);
 
 // Non traité
 
@@ -106,3 +109,5 @@ Route::apiResource('/patients', PatientController::class);
 Route::apiResource('rendez-vous', RendezVousController::class);
 
 Route::get('/rendez-vous-a-valider', [RendezVousController::class, 'rendezVousAValider'])->middleware(['auth:api']);
+
+Route::post('/save_ordonnance/{medicamentsPrescrits}', [OrdonnanceController::class, 'store']);

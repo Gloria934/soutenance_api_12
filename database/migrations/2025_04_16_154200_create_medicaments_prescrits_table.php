@@ -17,6 +17,10 @@ return new class extends Migration {
             $table->boolean('statut')
                 ->default(false) // 'non sélectionné' par défaut
                 ->comment('false: non sélectionné, true: sélectionné');
+            $table->string('posologie')->nullable();
+            $table->string('duree')->nullable();
+            $table->string('avis')->nullable();
+            $table->boolean('substitution_autorisee')->default(false);
             $table->softDeletes();
             $table->timestamps();
 

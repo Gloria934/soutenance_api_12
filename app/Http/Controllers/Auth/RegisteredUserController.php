@@ -17,6 +17,8 @@ use Kreait\Firebase\Factory;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
 use App\Models\SimpleNotification;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class RegisteredUserController extends Controller
 {
@@ -94,6 +96,7 @@ class RegisteredUserController extends Controller
                 $user->assignRole('admin');
             } elseif ($user->role_voulu == null) {
                 $user->assignRole('patient');
+                $user->code_patient == PatientCodeGenerator::generatePatientCode();
             } else {
                 $user->assignRole('pending'); // Rôle temporaire jusqu'à approbation
                 $this->sendNotificationToAdmin($user);
@@ -208,5 +211,42 @@ class RegisteredUserController extends Controller
         return response()->json([
             'role' => $user->getRoleNames()->first(),
         ], 200);
+    }
+}
+
+class PatientCodeGenerator
+{
+    /**
+     * Génère un nouveau code patient unique au format PAT-XXXXXX.
+     * Utilise une chaîne alphanumérique aléatoire pour éviter toute limite pratique.
+     *
+     * @return string Nouveau code patient (ex. PAT-A1B2C3)
+     * @throws \Exception Si impossible de générer un code unique après plusieurs tentatives
+     */
+    public static function generatePatientCode(): string
+    {
+        return DB::transaction(function () {
+            $maxAttempts = 10; // Nombre maximum de tentatives pour éviter une boucle infinie
+            $codeLength = 6; // Longueur de la partie aléatoire (6 caractères)
+            $prefix = 'PAT-'; // Préfixe du code
+
+            for ($attempt = 1; $attempt <= $maxAttempts; $attempt++) {
+                // Générer une chaîne aléatoire de 6 caractères (lettres majuscules et chiffres)
+                $randomPart = Str::random($codeLength);
+                $randomPart = strtoupper(preg_replace('/[^A-Z0-9]/', '', $randomPart)); // Assurer A-Z, 0-9
+                if (strlen($randomPart) < $codeLength) {
+                    // Si la chaîne est trop courte (peu probable), compléter avec des chiffres
+                    $randomPart .= str_pad(mt_rand(0, pow(10, $codeLength - strlen($randomPart)) - 1), $codeLength - strlen($randomPart), '0', STR_PAD_LEFT);
+                }
+                $newCode = $prefix . substr($randomPart, 0, $codeLength);
+
+                // Vérifier si le code est unique
+                if (!User::where('code_patient', $newCode)->exists()) {
+                    return $newCode;
+                }
+            }
+
+            throw new \Exception('Impossible de générer un code patient unique après ' . $maxAttempts . ' tentatives.');
+        });
     }
 }

@@ -12,8 +12,8 @@ return new class extends Migration {
     {
         Schema::create('ordonnances', function (Blueprint $table) {
             $table->id();
-            $table->float('montant');
-            $table->date('date_ordonnance');
+            $table->float('montant_total');
+            $table->float('montant_paye');
             $table->softDeletes();
             $table->timestamps();
 
