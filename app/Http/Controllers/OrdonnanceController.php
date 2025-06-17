@@ -27,18 +27,25 @@ class OrdonnanceController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, $medicamentsPrescrits)
+    public function store(Request $request)
     {
         $validator = $request->validate([
-            'montant_total' => ['required', 'float'],
+            'montant_total' => ['required', 'numeric'],
+            'medicaments_prescrits' => ['required', 'array'],
+            'medicaments_prescrits.*.quantite' => ['required', 'integer'],
+            'medicaments_prescrits.*.statut' => ['required', 'boolean'],
+            'medicaments_prescrits.*.posologie' => ['nullable', 'string'],
+            'medicaments_prescrits.*.duree' => ['nullable', 'string'],
+            'medicaments_prescrits.*.avis' => ['nullable', 'string'],
+            'medicaments_prescrits.*.substitution_autorisee' => ['nullable', 'boolean'],
         ]);
-        $ordonnance = Ordonnance::create(
-            [
 
-                'montant_total' => $validator['montant_paye'],
-            ]
-        );
-        foreach ($medicamentsPrescrits as $medicamentPrescrit) {
+        $ordonnance = Ordonnance::create([
+            'montant_total' => $validator['montant_total'],
+            'montant_paye' => 0, // Ajustez selon votre logique
+        ]);
+
+        foreach ($validator['medicaments_prescrits'] as $medicamentPrescrit) {
             MedicamentPrescrit::create([
                 'ordonnance_id' => $ordonnance->id,
                 'quantite' => $medicamentPrescrit['quantite'],
@@ -47,13 +54,16 @@ class OrdonnanceController extends Controller
                 'duree' => $medicamentPrescrit['duree'],
                 'avis' => $medicamentPrescrit['avis'],
                 'substitution_autorisee' => $medicamentPrescrit['substitution_autorisee'],
+                // Ajoutez 'pharmaceutical_product_id' si nécessaire
             ]);
         }
+
         return response()->json([
             'message' => 'Enregistrement effectué avec succès',
             'ordonnance' => $ordonnance,
-        ]);
+        ], 201);
     }
+
 
     /**
      * Display the specified resource.
