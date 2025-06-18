@@ -110,4 +110,4 @@ Route::apiResource('rendez-vous', RendezVousController::class);
 
 Route::get('/rendez-vous-a-valider', [RendezVousController::class, 'rendezVousAValider'])->middleware(['auth:api']);
 
-Route::post('/save_ordonnance/{medicamentsPrescrits}', [OrdonnanceController::class, 'store']);
+Route::post('/save_ordonnance', [OrdonnanceController::class, 'store']);
