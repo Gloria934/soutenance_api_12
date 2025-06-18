@@ -23,6 +23,8 @@ use App\Http\Controllers\SimpleNotificationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Kreait\Firebase\Factory;
+// use Illuminate\Support\Facades\Log;
+
 
 require __DIR__ . '/auth.php';
 
@@ -83,7 +85,7 @@ Route::get('/test-firebase', function () {
             ->createAuth();
         return response()->json(['message' => 'Firebase initialized successfully']);
     } catch (\Exception $e) {
-        \Log::error('Firebase initialization failed: ' . $e->getMessage());
+        \Illuminate\Support\Facades\Log::error('Firebase initialization failed: ' . $e->getMessage());
         return response()->json([
             'error' => 'Failed to initialize Firebase: ' . $e->getMessage(),
         ], 500);
@@ -110,4 +112,4 @@ Route::apiResource('rendez-vous', RendezVousController::class);
 
 Route::get('/rendez-vous-a-valider', [RendezVousController::class, 'rendezVousAValider'])->middleware(['auth:api']);
 
-Route::post('save_ordonnance', [OrdonnanceController::class, 'store']);
+Route::post('/save_ordonnance', [OrdonnanceController::class, 'store']);

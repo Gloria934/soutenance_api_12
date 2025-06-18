@@ -37,12 +37,14 @@ class MedicamentPrescrit extends Model
 
     protected $fillable = [
         'ordonnance_id',
+        'pharmaceutical_product_id',
         'quantite',
         'statut',
         'posologie',
         'duree',
         'avis',
         'substitution_autorisee',
+
     ];
 
     public function ordonnance()
