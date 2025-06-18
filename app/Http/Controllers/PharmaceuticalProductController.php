@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 class PharmaceuticalProductController extends Controller
 {
@@ -220,40 +221,81 @@ class PharmaceuticalProductController extends Controller
      */
     public function update($id, Request $request)
     {
-        $validated = $request->validate([
-            'nom_produit' => 'required|string|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'dosage' => 'required|string|max:255',
-            'prix' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-            'description' => 'nullable|string',
-            'date_expiration' => 'nullable|date|after:today',
-            'dci_id' => 'required|exists:dcis,id',
-            'classe_id' => 'required|exists:classes,id',
-            'categorie_id' => 'required|exists:categories,id',
-            'sous_categorie_id' => 'required|exists:sous_categories,id',
-            'forme_id' => 'required|exists:formes,id',
-        ]);
+        try {
+            // Log des données brutes reçues
+            Log::debug('Données reçues dans update PharmaceuticalProduct', [
+                'id' => $id,
+                'request_data' => $request->all(),
+                'content_type' => $request->header('Content-Type'),
+            ]);
 
-        $product = PharmaceuticalProduct::findOrFail($id);
+            // Validation des données
+            $validated = $request->validate([
+                'nom_produit' => 'required|string|max:255',
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'dosage' => 'required|string|max:255',
+                'prix' => 'required|numeric|min:0',
+                'stock' => 'required|integer|min:0',
+                'description' => 'nullable|string',
+                'date_expiration' => 'nullable|date|after:today',
+                'dci_id' => 'required|exists:dcis,id',
+                'classe_id' => 'required|exists:classes,id',
+                'categorie_id' => 'required|exists:categories,id',
+                'sous_categorie_id' => 'required|exists:sous_categories,id',
+                'forme_id' => 'required|exists:formes,id',
+            ]);
 
-        if ($request->hasFile('image')) {
-            if ($product->image_path) {
-                Storage::disk('public')->delete($product->image_path);
+            // Log des données validées
+            Log::debug('Données validées pour mise à jour', $validated);
+
+            // Recherche du produit
+            $product = PharmaceuticalProduct::findOrFail($id);
+            Log::debug('Produit trouvé', ['product_id' => $product->id]);
+
+            // Gestion de l'image
+            if ($request->hasFile('image')) {
+                Log::debug('Image détectée dans la requête');
+                if ($product->image_path) {
+                    Log::debug('Suppression de l\'ancienne image', ['image_path' => $product->image_path]);
+                    Storage::disk('public')->delete($product->image_path);
+                }
+                $path = $request->file('image')->store('products', 'public');
+                $validated['image_path'] = $path;
+                Log::debug('Nouvelle image enregistrée', ['image_path' => $path]);
             }
-            $path = $request->file('image')->store('products', 'public');
-            $validated['image_path'] = $path;
+
+            // Mise à jour du produit
+            $product->update($validated);
+            Log::info('Produit mis à jour avec succès', ['product_id' => $product->id]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Produit mis à jour avec succès',
+                'data' => $product
+            ], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Log des erreurs de validation
+            Log::error('Erreur de validation dans update PharmaceuticalProduct', [
+                'errors' => $e->errors(),
+                'request_data' => $request->all(),
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur de validation',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            // Log des autres exceptions
+            Log::error('Erreur inattendue dans update PharmaceuticalProduct', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la mise à jour du produit',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        // $product->nom_produit = $request->nom_produit;
-
-        $product->update($validated);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Produit mis à jour avec succès',
-            'data' => $product
-        ], 200);
     }
 
     /**
