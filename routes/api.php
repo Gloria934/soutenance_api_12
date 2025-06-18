@@ -43,6 +43,8 @@ Route::post('services/{id}/restore', [ServiceController::class, 'restore']);
 Route::post('verify_user_number', [AuthenticatedSessionController::class, 'verifyUserNumber']);
 Route::apiResource('pharmaceutical_products', PharmaceuticalProductController::class);
 Route::put('pharmaceutical_products/{id}', [PharmaceuticalProductController::class, 'update']);
+// Route::delete('pharmaceutical_products/{id}', [PharmaceuticalProductController::class, 'delete']);
+
 Route::put('ordonnance/{code_patient}', [PharmacyController::class, 'getOrdonnance']);
 
 // Non traité
