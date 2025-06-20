@@ -56,6 +56,17 @@ class RendezVousController extends Controller
         ], 200);
     }
 
+    public function getUserRdv()
+    {
+        $user = Auth::guard('api')->user();
+        $rdvs = RendezVous::whereNotNull('date_rdv')->where('patient_id',$user->id)->with('patient', 'service')->get();
+
+        return response()->json([
+            'message'=>'succès',
+            'rdvs'=>$rdvs,
+        ],200);
+    }
+
     /**
      * Store a newly created resource in storage.
      */

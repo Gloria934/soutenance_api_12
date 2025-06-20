@@ -4,7 +4,7 @@ namespace App\Enums;
 
 enum StatutEnum: string
 {
-    case ENATTENTE = 'en-attente';
+    case ENATTENTE = 'attente';
     case ANNULE = 'annule';
     case TERMINE = 'termine';
     case CONFIRME = 'confirme';
@@ -13,7 +13,7 @@ enum StatutEnum: string
     public function label(): string
     {
         return match ($this) {
-            self::ENATTENTE => 'En attente',
+            self::ENATTENTE => 'Attente',
             self::ANNULE => 'Annulé',
             self::TERMINE => 'Terminé',
             self::CONFIRME => 'Confirmé',

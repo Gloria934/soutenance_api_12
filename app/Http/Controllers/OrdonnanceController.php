@@ -4,9 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\MedicamentPrescrit;
 use App\Models\Ordonnance;
+use App\Models\PharmaceuticalProduct;
+use App\Models\User;
 // use Dotenv\Exception\ValidationException;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Auth;
+
+
 // use Illuminate\Support\Facades\Log;
 
 // ValidationException
@@ -51,6 +56,7 @@ class OrdonnanceController extends Controller
             $validator = $request->validate([
                 'montant_total' => ['required', 'numeric'],
                 'medicaments_prescrits' => ['required', 'array'],
+                'patient_id'=>['required','numeric'],
                 // 'medicaments_prescrits.*.quantite' => ['required', 'integer'],
                 // 'medicaments_prescrits.*.statut' => ['required', 'boolean'],
                 // 'medicaments_prescrits.*.posologie' => ['nullable', 'string'],
@@ -65,6 +71,7 @@ class OrdonnanceController extends Controller
             $ordonnance = Ordonnance::create([
                 'montant_total' => $validator['montant_total'],
                 'montant_paye' => 0, // Ajustez selon votre logique
+                'patient_id'=>$validator['patient_id'],
             ]);
             \Illuminate\Support\Facades\Log::info('Ordonnance créée', ['ordonnance_id' => $ordonnance->id]);
 
@@ -118,6 +125,19 @@ class OrdonnanceController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
+    }
+
+
+
+    public function getUserOrdonnances()
+    {
+        $user = Auth::guard('api')->user();
+        $ordonnances = Ordonnance::where('patient_id',$user->id)->with('medicaments_prescrits','medicaments_prescrits.pharmaceutical_product')->get();
+
+        return response()->json([
+            'message'=>'succès',
+            'ordonnances'=>$ordonnances,
+        ],200);
     }
 
 

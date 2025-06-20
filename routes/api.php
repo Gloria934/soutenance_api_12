@@ -8,6 +8,7 @@ use App\Http\Controllers\API\FormeController;
 use App\Http\Controllers\API\SousCategoryController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\ConsultationController;
 use App\Http\Controllers\DeviceTokenController;
 use App\Http\Controllers\OrdonnanceController;
 use App\Http\Controllers\PatientController;
@@ -23,6 +24,7 @@ use App\Http\Controllers\SimpleNotificationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Kreait\Firebase\Factory;
+
 // use Illuminate\Support\Facades\Log;
 
 
@@ -111,7 +113,10 @@ Route::post('/scan', [PersonnelController::class, 'scanUser'], );
 Route::apiResource('/patients', PatientController::class);
 
 Route::apiResource('rendez-vous', RendezVousController::class);
+Route::get('rendez-vous-utilisateur',[RendezVousController::class, 'getUserRdv']);
 
 Route::get('/rendez-vous-a-valider', [RendezVousController::class, 'rendezVousAValider'])->middleware(['auth:api']);
 
 Route::post('/save_ordonnance', [OrdonnanceController::class, 'store']);
+Route::get('/ordonnances-utilisateur',[OrdonnanceController::class,'getUserOrdonnances']);
+Route::apiResource('/consultations',ConsultationController::class);

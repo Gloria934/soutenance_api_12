@@ -9,6 +9,7 @@ class Ordonnance extends Model
     protected $fillable = [
         'montant_total',
         'montant_paye',
+        'patient_id',
 
     ];
 
@@ -16,6 +17,12 @@ class Ordonnance extends Model
     {
         return $this->hasMany(MedicamentPrescrit::class);
     }
+
+    public function pharmaceutical_products(){
+        return $this->hasManyThrough(PharmaceuticalProduct::class,MedicamentPrescrit::class);
+    }
+
+    
     public function patient()
     {
         return $this->belongsTo(User::class);

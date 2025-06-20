@@ -14,6 +14,8 @@ return new class extends Migration {
             $table->id();
             $table->float('montant_total');
             $table->float('montant_paye');
+            $table->foreignId('patient_id')->constrained('users');
+
             $table->softDeletes();
             $table->timestamps();
 
