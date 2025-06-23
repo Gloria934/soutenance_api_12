@@ -140,6 +140,84 @@ class OrdonnanceController extends Controller
         ],200);
     }
 
+    public function updateOrdonnance(Request $request)
+    {
+        // Log de la requête entrante pour vérifier les données envoyées
+        // \Illuminate\Support\Facades\Log::info('Début de la méthode store', [
+        //     'request_data' => $request->all(),
+        //     'headers' => $request->headers->all(),
+        //     'ip' => $request->ip(),
+        //     'url' => $request->fullUrl(),
+        // ]);
+
+        try {
+            // Validation des données
+            \Illuminate\Support\Facades\Log::info('Début de la validation des données');
+            \Illuminate\Support\Facades\Log::info('Liste des meds', ['validated_data' => $request->medicaments_prescrits]);
+
+            $validator = $request->validate([
+                'montant_paye' => ['required'],
+                'medicaments_prescrits' => ['required', 'array'],
+                // 'patient_id'=>['required','numeric'],
+                
+            ]);
+            \Illuminate\Support\Facades\Log::info('Validation réussie', ['validated_data' => $validator]);
+
+            // Création de l'ordonnance
+            \Illuminate\Support\Facades\Log::info('Création de l\'ordonnance');
+
+            $ordonnance = Ordonnance::find($validator['medicaments_prescrits'][0]);
+            $ordonnance->montant_paye = $alidator['montant_paye'];
+
+            // $ordonnance = Ordonnance::create([
+            //     'montant_total' => $validator['montant_total'],
+            //     'montant_paye' => 0, // Ajustez selon votre logique
+            //     'patient_id'=>$validator['patient_id'],
+            // ]);
+            \Illuminate\Support\Facades\Log::info('Ordonnance mise à jour ');
+
+            // Création des médicaments prescrits
+            \Illuminate\Support\Facades\Log::info('Début de la création des médicaments prescrits');
+            foreach ($validator['medicaments_prescrits'] as $index => $medicamentPrescrit) {
+                \Illuminate\Support\Facades\Log::info('Création du médicament prescrit', ['index' => $index, 'data' => $medicamentPrescrit]);
+                MedicamentPrescrit::create([
+                    'statut' => true,
+                ]);
+            }
+            \Illuminate\Support\Facades\Log::info('Médicaments prescrits créés avec succès');
+
+            // Réponse JSON en cas de succès
+            \Illuminate\Support\Facades\Log::info('Préparation de la réponse JSON');
+            return response()->json([
+                'message' => 'Mise à jour effectuée avec succès',
+            ], 201);
+        } catch (ValidationException $e) {
+            // Gestion des erreurs de validation
+            \Illuminate\Support\Facades\Log::error('Erreur de validation', [
+                'errors' => $e->errors(),
+                'request_data' => $request->all(),
+            ]);
+            return response()->json([
+                'message' => 'Erreur de validation',
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\Exception $e) {
+            // Gestion des autres erreurs
+            \Illuminate\Support\Facades\Log::error('Erreur inattendue dans la méthode store', [
+                'message' => $e->getMessage(),
+                'code' => $e->getCode(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+                'request_data' => $request->all(),
+            ]);
+            return response()->json([
+                'message' => 'Une erreur est survenue lors de la mise à jour.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
 
     /**
      * Display the specified resource.

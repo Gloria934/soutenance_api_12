@@ -99,7 +99,7 @@ class RegisteredUserController extends Controller
                 $user->code_patient == PatientCodeGenerator::generatePatientCode();
             } else {
                 $user->assignRole('pending'); // Rôle temporaire jusqu'à approbation
-                $this->sendNotificationToAdmin($user);
+                // $this->sendNotificationToAdmin($user);
             }
 
             // Déclenchement de l'événement Registered
