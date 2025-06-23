@@ -113,11 +113,11 @@ Route::post('/scan', [PersonnelController::class, 'scanUser'], );
 Route::apiResource('/patients', PatientController::class);
 
 Route::apiResource('rendez-vous', RendezVousController::class);
-Route::get('rendez-vous-utilisateur',[RendezVousController::class, 'getUserRdv']);
+Route::get('rendez-vous-utilisateur', [RendezVousController::class, 'getUserRdv']);
 
 Route::get('/rendez-vous-a-valider', [RendezVousController::class, 'rendezVousAValider'])->middleware(['auth:api']);
 
 Route::post('/save_ordonnance', [OrdonnanceController::class, 'store']);
-Route::get('/ordonnances-utilisateur',[OrdonnanceController::class,'getUserOrdonnances']);
-Route::post('/update_ordonnance',[OrdonnanceController::class, 'updateOrdonnance']);
-Route::apiResource('/consultations',ConsultationController::class);
+Route::get('/ordonnances-utilisateur', [OrdonnanceController::class, 'getUserOrdonnances']);
+Route::post('/update_ordonnance', [OrdonnanceController::class, 'updateOrdonnance']);
+Route::apiResource('/consultations', ConsultationController::class);
