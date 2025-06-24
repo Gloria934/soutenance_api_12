@@ -30,20 +30,33 @@ class RendezVousController extends Controller
     }
 
 
-    public function accueil(){
+    public function accueil()
+    {
         $user = Auth::guard('api')->user();
 
-        $nextRdv = RendezVous::where('patient_id',$user->id)->where('statut',StatutEnum::CONFIRME->value)->orderBy('date_rdv','asc')->first();
-        $nombreOrdonnance = Ordonnance::where('montant_paye'>0)->count();
+        // Vérifiez si l'utilisateur est authentifié
+        if (!$user) {
+            return response()->json([
+                'message' => 'Utilisateur non authentifié',
+            ], 401);
+        }
+
+        // Récupérer le prochain rendez-vous
+        $nextRdv = RendezVous::where('patient_id', $user->id)
+            ->where('statut', StatutEnum::CONFIRME->value)
+            ->orderBy('date_rdv', 'asc')
+            ->first();
+
+        // Compter les ordonnances avec montant_paye > 0
+        $nombreOrdonnance = Ordonnance::where('montant_paye', '>', 0)->count();
 
         return response()->json([
-            'message'=>'Succès',
-            'nextRdv'=>$nextRdv,
-            'nombreOrdonnance'=>$nombreOrdonnance,
-        ],200);
-
+            'message' => 'Succès',
+            'nextRdv' => $nextRdv,
+            'nombreOrdonnance' => $nombreOrdonnance,
+        ], 200);
     }
-    
+
     public function rendezVousAValider()
     {
         // Vérifier si l'utilisateur est authentifié
@@ -76,12 +89,12 @@ class RendezVousController extends Controller
     public function getUserRdv()
     {
         $user = Auth::guard('api')->user();
-        $rdvs = RendezVous::whereNotNull('date_rdv')->where('patient_id',$user->id)->with('patient', 'service')->get();
+        $rdvs = RendezVous::whereNotNull('date_rdv')->where('patient_id', $user->id)->with('patient', 'service')->get();
 
         return response()->json([
-            'message'=>'succès',
-            'rdvs'=>$rdvs,
-        ],200);
+            'message' => 'succès',
+            'rdvs' => $rdvs,
+        ], 200);
     }
 
     /**
