@@ -42,13 +42,13 @@ class RendezVousController extends Controller
         }
 
         // Récupérer le prochain rendez-vous
-        $nextRdv = RendezVous::where('patient_id', $user->id)
+        $nextRdv = RendezVous::where('patient_id', $user->id)->whereNotNull('date_rdv')
             ->where('statut', StatutEnum::CONFIRME->value)
             ->orderBy('date_rdv', 'asc')
             ->first();
 
         // Compter les ordonnances avec montant_paye > 0
-        $nombreOrdonnance = Ordonnance::where('montant_paye', '>', 0)->count();
+        $nombreOrdonnance = Ordonnance::where('montant_paye', 0)->count();
 
         return response()->json([
             'message' => 'Succès',
