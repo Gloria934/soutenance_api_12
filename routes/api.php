@@ -120,4 +120,6 @@ Route::get('/rendez-vous-a-valider', [RendezVousController::class, 'rendezVousAV
 Route::post('/save_ordonnance', [OrdonnanceController::class, 'store']);
 Route::get('/ordonnances-utilisateur', [OrdonnanceController::class, 'getUserOrdonnances']);
 Route::post('/update_ordonnance', [OrdonnanceController::class, 'updateOrdonnance']);
+Route::post('/update_consultation', [ConsultationController::class, 'updateConsultation']);
+
 Route::apiResource('/consultations', ConsultationController::class);
