@@ -121,5 +121,5 @@ Route::post('/save_ordonnance', [OrdonnanceController::class, 'store']);
 Route::get('/ordonnances-utilisateur', [OrdonnanceController::class, 'getUserOrdonnances']);
 Route::post('/update_ordonnance', [OrdonnanceController::class, 'updateOrdonnance']);
 Route::post('/update_consultation', [ConsultationController::class, 'updateConsultation']);
-
+Route::get('accueil',[RendezVousController::class,'accueil']);
 Route::apiResource('/consultations', ConsultationController::class);

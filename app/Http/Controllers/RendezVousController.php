@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Enums\StatutEnum;
+use App\Models\Ordonnance;
 use App\Models\RendezVous;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+
 
 
 class RendezVousController extends Controller
@@ -24,6 +26,21 @@ class RendezVousController extends Controller
 
             ], 200);
         }
+
+    }
+
+
+    public function accueil(){
+        $user = Auth::guard('api')->user();
+
+        $nextRdv = RendezVous::where('patient_id',$user->id)->where('statut',StatutEnum::CONFIRME->value)->orderBy('date_rdv','asc')->first();
+        $nombreOrdonnance = Ordonnance::where('montant_paye'>0)->count();
+
+        return response()->json([
+            'message'=>'Succès',
+            'nextRdv'=>$nextRdv,
+            'nombreOrdonnance'=>$nombreOrdonnance,
+        ],200);
 
     }
     
