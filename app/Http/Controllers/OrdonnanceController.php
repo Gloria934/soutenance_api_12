@@ -137,12 +137,24 @@ class OrdonnanceController extends Controller
         ], 200);
     }
 
-    public function findUserOrdonnance(int $id)
+    public function findUserOrdonnance(Request $request)
     {
-        $medsPrescrits = MedicamentPrescrit::where('ordonnance_id', $id)->where('statut', true)->with('pharmaceutical_product')->get();
+        $medsPrescrits = MedicamentPrescrit::where('ordonnance_id', $request->id)->where('statut', true)->with('pharmaceutical_product')->get();
         return response()->json([
             'message' => 'succès',
             'medicaments' => $medsPrescrits,
+        ], 200);
+
+    }
+
+    public function invaliderOrdonnance(Request $request)
+    {
+        $ordonnance = Ordonnance::findOrFail($request->id);
+        $ordonnance->statut = true;
+        $ordonnance->save();
+        return response()->json([
+            'message' => 'succès',
+            'ordonnance' => $ordonnance,
         ], 200);
 
     }

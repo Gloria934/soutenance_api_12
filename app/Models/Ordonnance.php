@@ -10,6 +10,7 @@ class Ordonnance extends Model
         'montant_total',
         'montant_paye',
         'patient_id',
+        'statut',
 
     ];
 
