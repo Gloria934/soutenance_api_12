@@ -122,8 +122,6 @@ Route::get('/ordonnances-utilisateur', [OrdonnanceController::class, 'getUserOrd
 Route::post('find-ordonnance', [OrdonnanceController::class, 'findUserOrdonnance']);
 Route::post('invalider-ordonnance', [OrdonnanceController::class, 'invaliderOrdonnance']);
 
-
-
 Route::post('/update_ordonnance', [OrdonnanceController::class, 'updateOrdonnance']);
 
 Route::post('/update_consultation', [ConsultationController::class, 'updateConsultation']);

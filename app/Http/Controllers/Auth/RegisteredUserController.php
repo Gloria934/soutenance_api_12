@@ -96,7 +96,8 @@ class RegisteredUserController extends Controller
                 $user->assignRole('admin');
             } elseif ($user->role_voulu == null) {
                 $user->assignRole('patient');
-                $user->code_patient == PatientCodeGenerator::generatePatientCode();
+                $user->code_patient = "PAT-$user->id";
+                $user->save();
             } else {
                 $user->assignRole('pending'); // Rôle temporaire jusqu'à approbation
                 // $this->sendNotificationToAdmin($user);
