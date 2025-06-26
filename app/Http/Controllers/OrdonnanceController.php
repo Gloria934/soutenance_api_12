@@ -238,7 +238,13 @@ class OrdonnanceController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $user = User::findOrFail($id);
+        $ordonnances = Ordonnance::where('patient_id', $user->id)->with('medicaments_prescrits', 'medicaments_prescrits.pharmaceutical_product')->get();
+
+        return response()->json([
+            'message' => 'succès',
+            'ordonnances' => $ordonnances,
+        ], 200);
     }
 
     /**

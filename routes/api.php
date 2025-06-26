@@ -46,7 +46,7 @@ Route::post('verify_user_number', [AuthenticatedSessionController::class, 'verif
 Route::apiResource('pharmaceutical_products', PharmaceuticalProductController::class);
 Route::put('pharmaceutical_products/{id}', [PharmaceuticalProductController::class, 'update']);
 // Route::delete('pharmaceutical_products/{id}', [PharmaceuticalProductController::class, 'delete']);
-
+Route::apiResource('ordonnance',OrdonnanceController::class);
 Route::put('ordonnance/{code_patient}', [PharmacyController::class, 'getOrdonnance']);
 
 // Non traité
@@ -114,6 +114,7 @@ Route::apiResource('/patients', PatientController::class);
 
 Route::apiResource('rendez-vous', RendezVousController::class);
 Route::get('rendez-vous-utilisateur', [RendezVousController::class, 'getUserRdv']);
+
 
 Route::get('/rendez-vous-a-valider', [RendezVousController::class, 'rendezVousAValider'])->middleware(['auth:api']);
 

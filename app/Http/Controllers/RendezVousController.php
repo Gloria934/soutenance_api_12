@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Enums\StatutEnum;
 use App\Models\Ordonnance;
 use App\Models\RendezVous;
+use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+
 
 
 
@@ -137,7 +139,14 @@ class RendezVousController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $user = User::findOrFail($id);
+        $rdvs = RendezVous::whereNotNull('date_rdv')->where('patient_id', $user->id)->with('patient', 'service')->get();
+
+        return response()->json([
+            'message' => 'succès',
+            'appointments' => $rdvs,
+        ], 200);
+        
     }
 
     /**
