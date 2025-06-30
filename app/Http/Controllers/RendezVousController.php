@@ -128,8 +128,9 @@ class RendezVousController extends Controller
             'statut' => StatutEnum::ENATTENTE->value,
         ]);
 
+
         return response()->json([
-            'message' => 'Appointment created successfully',
+            'message' => 'Rendez-vous créé avec succès ...',
             'rdv' => $rdv
         ], 200);
     }
@@ -146,7 +147,7 @@ class RendezVousController extends Controller
             'message' => 'succès',
             'appointments' => $rdvs,
         ], 200);
-        
+
     }
 
     /**
@@ -163,5 +164,59 @@ class RendezVousController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+    // Je dois récupérer les utilisateurs qui ont pour serviceId l'id du service du rendezvous 
+    private function sendOtpViaOneSignal(string $playerId, string $message)
+    {
+        $url = "https://onesignal.com/api/v1/notifications";
+
+        $apiKey = env("ONESIGNAL_REST_API_KEY");
+        $appId = env("ONESIGNAL_APP_ID");
+
+        $headers = [
+            "Authorization: Basic " . $apiKey,
+
+            "Content-Type: application/json"
+        ];
+
+        $data = [
+            "app_id" => $appId,
+            "include_player_ids" => [$playerId],
+            "headings" => ["en" => "mediPay"],
+            "contents" => ["en" => $message],
+            "priority" => 10,
+        ];
+
+        \Log::info('OneSignal Notification - Data to send', $data);
+        \Log::info('OneSignal Notification - Headers', $headers);
+
+        $ch = curl_init();
+
+        curl_setopt_array($ch, [
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => json_encode($data),
+            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_SSL_VERIFYHOST => false,
+        ]);
+
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        if (curl_errno($ch)) {
+            \Log::error('OneSignal Notification - CURL error: ' . curl_error($ch));
+        }
+
+        curl_close($ch);
+
+        \Log::info('OneSignal Notification - HTTP Code', ['httpCode' => $httpCode]);
+        \Log::info('OneSignal Notification - Response', ['response' => $response]);
+
+        return [
+            'status' => $httpCode,
+            'response' => $response
+        ];
     }
 }
