@@ -1,13 +1,76 @@
+// // // // APP_NAME=Laravel
+// // // // APP_ENV=local
+// // // // APP_KEY=base64:rQ26yPsPlUKgSXV992rVtGHyUHWWcVaK4fFQz66rw9A=
+// // // // APP_DEBUG=true
+// // // // APP_URL=http://localhost:8000
+// // // // FRONTEND_URL=http://localhost:3000
+// // // // APP_LOCALE=en
+// // // // APP_FALLBACK_LOCALE=en
+// // // // APP_FAKER_LOCALE=en_US
+// // // // APP_MAINTENANCE_DRIVER=file
+// // // // # APP_MAINTENANCE_STORE=database
+// // // // PHP_CLI_SERVER_WORKERS=4
+// // // // BCRYPT_ROUNDS=12
+// // // // LOG_CHANNEL=stack
+// // // // LOG_STACK=single
+// // // // LOG_DEPRECATIONS_CHANNEL=null
+// // // // LOG_LEVEL=debug
+// // // // DB_CONNECTION=mysql
+// // // // DB_HOST=127.0.0.1
+// // // // DB_PORT=3306
+// // // // DB_DATABASE=laravel
+// // // // DB_USERNAME=root
+// // // // DB_PASSWORD=
+// // // // ONESIGNAL_APP_ID="9e914922-c092-417a-ab56-765ec02ac6d7"
+// // // // # ONESIGNAL_REST_API_KEY="zevd4sje7ext4c4ey33fotysdos_v2_app_sjhzqxqw3zd3fa2ltxoyvqcsy3m3bykopy5ehneksfcjf5jnpk7t5zaypwcpurm2lirtht4phgs27rkpwurrsi4dlnm54e775nxbn3i"
+// // // // ONESIGNAL_REST_API_KEY="os_v2_app_t2iusiwasjaxvk2wozpmakwg24ebkduyl7peg5uosqlhylgormvtpafqkxbdba2bxvheoftgminmgekqzk7axo74iastprubqmswyea"
+// // // // # os_v2_app_t2iusiwasjaxvk2wozpmakwg24ebkduyl7peg5uosqlhylgormvtpafqkxbdba2bxvheoftgminmgekqzk7axo74iastprubqmswyea
+// // // // # ONESIGNAL_REST_API_URL=https://api.onesignal.com
+// // // // # Vérifier le  credential du projet 
+// // // // FIREBASE_CREDENTIALS=storage/app/firebase-adminsdk.json
+// // // // # FIREBASE_DATABASE_URL="https://projetfirebasetest-28637-default-rtdb.firebaseio.com"
+// // // // #
+// // // // SANCTUM_STATEFUL_DOMAINS=localhost,127.0.0.1
+// // // // SESSION_DRIVER=database
+// // // // SESSION_LIFETIME=120
+// // // // SESSION_ENCRYPT=false
+// // // // SESSION_PATH=/
+// // // // SESSION_DOMAIN=null
+// // // // BROADCAST_CONNECTION=log
+// // // // FILESYSTEM_DISK=local
+// // // // QUEUE_CONNECTION=database
+// // // // CACHE_STORE=database
+// // // // # CACHE_PREFIX=
+// // // // MEMCACHED_HOST=127.0.0.1
+// // // // REDIS_CLIENT=phpredis
+// // // // REDIS_HOST=127.0.0.1
+// // // // REDIS_PASSWORD=null
+// // // // REDIS_PORT=6379
+// // // // MAIL_MAILER=log
+// // // // MAIL_SCHEME=null
+// // // // MAIL_HOST=127.0.0.1
+// // // // MAIL_PORT=2525
+// // // // MAIL_USERNAME=null
+// // // // MAIL_PASSWORD=null
+// // // // MAIL_FROM_ADDRESS="hello@example.com"
+// // // // MAIL_FROM_NAME="${APP_NAME}"
+// // // // AWS_ACCESS_KEY_ID=
+// // // // AWS_SECRET_ACCESS_KEY=
+// // // // AWS_DEFAULT_REGION=us-east-1
+// // // // AWS_BUCKET=
+// // // // AWS_USE_PATH_STYLE_ENDPOINT=false
+// // // // VITE_APP_NAME="${APP_NAME}"
+// Voici le contenu de storage/app/ffirebase-adminsdk.json
 // // // {
-// // //   "type": "service_account",
-// // //   "project_id": "projetfirebasetest-28637",
-// // //   "private_key_id": "225804844dd226e9b5b012b4fee21f9812d6c3e6",
-// // //   "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCvVF0wGrtyB54D\ne7zN0RIa1RDhcVlvFa+mlPsNND6Dqo6GfueW2ietc9REDgExpVBwwe5ssoMWID7n\npenFgzxxfFA9ekDpEpT1CbElawpwsvGMsHWNTJScbWOd5JxX8Lrij2yZ06mbIzxD\no89y2TD4mH8R7qsdpdNqJRhslNStlwMQ5EybGCgZ0/jQQy7EMngTXhbmb2rEAAlh\n2cfuHMkc5VsoA/x4ZzBgyx5flbenwUe4JX6VE54GEK1WobFSF+6UZceDyRhfbLQn\n+vo5HfBBeqXwUs0cio+7T7miTZQewrqCKXHsmum9hGdnSYBGQZX3opqCT973ys0C\n5qWBv1chAgMBAAECggEATIUC2LxKA7XcWkPWPnNZNfm4kNPSBv/NdeP+f6BGClvV\nMVDQjU9v0q1DPmJoVf0C0vtorero+C6hlaMdGFUy+4qYUIR7MN2pwhn1RNHnMBGB\nB3h6DW2XTIAXYnFEZMMNJVUYPjiZBLrHkfO71bGBxHV1u+NQrjNRxjkjZDw+Z/XP\n5z4IadT6byhvVGO2Cq6pLi4H/c33s2ucGyWsZurXWm5p3M4xphgprFotzW3WFrHh\niqxlmx9bgS6weB/mXR3xX1YZ8CE0jtKooWP6HsClP2MKoxek+XriF8tKeKMHJe0b\ngTpnTnLsfRgLGiWmDQeqbRvDZzj+s+n9mhheotYJUwKBgQDY/Vs+nmHtJ+L4Avv2\nCXjZJg9ZIqfyc31iMxcFWq9Klp1i7CO9meRB9WM0puY9LxWm8EOsvgGjBUe4n7+A\nMiyl2+Cd9tWj02MPbXqAgzx3NePY1RHUanOgtghbRkerchkhbj6soG82hfld55AA\nbu0rKNDaidHGntJPdzhZ6UmwWwKBgQDO2ai2/eTtBv5dsZusJgThXucIcn9pTSon\nD9APSa4IPWa06+QykaXzifoUEZLkHrq+MN1kKvhptD67KnR+ON195pir4wP2XIcY\nZZgc7Owp9wOomgJpuRXixmrphfkVx50qqhAmszxFpKarVyV1z430U4cYebsYqDpf\niNycYPmvMwKBgCN3hep+SNNSqa6QDk7wzWfw6KFRINJoPh5G64RchjpS0/bPUigz\ndzOwwD5i6U8m2wsmSml5xRq4SjjLI6n4iYOypMwtBE56xr5GzrcivEdf75YJfZiS\nrcOe/U6t9hj31VO5iVT+BC+NRm0q5Eat2uYrDbgqvrcQTp/ehL9tejXxAoGAbs2F\nZNDIanfOlh3nx+Vtw9P0aj/7JEsjg10jFK1hPiS1+cBKsxP2E2kbvthTGUOkwPCo\nB1pFS0o0OEpbsKmBbEm0Co9GtheGfnkdbJE1SJ17JjupgzyUDrA+4OzVKueMtyf2\nEuT8KkoyxaGe/Wa7IeAEhAXhRSoIatiDZHlGBqUCgYBt/sgRin6RXRT1eHMhwNsw\nB6PrUqPkuothu/HMkrvy3bem1ihBx8zpEPbjC6wZTI4L5F71J0NNdWqUdSHMbRjK\n7kvunbeoZ+unBcvO8v+VCNbsYJA2DsSlv2R5o6k9hqb+lnlm7u7exTTGvpLd36Cz\na2dEE3pPch1qqXqslTTm/A==\n-----END PRIVATE KEY-----\n",
-// // //   "client_email": "firebase-adminsdk-fbsvc@projetfirebasetest-28637.iam.gserviceaccount.com",
-// // //   "client_id": "109573566697500169053",
-// // //   "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-// // //   "token_uri": "https://oauth2.googleapis.com/token",
-// // //   "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-// // //   "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-fbsvc%40projetfirebasetest-28637.iam.gserviceaccount.com",
-// // //   "universe_domain": "googleapis.com"
-// // // }
+// // //     "type": "service_account",
+// // //     "project_id": "projetfirebasetest-28637",
+// // //     "private_key_id": "be618f0f9619bc0c907f765b15d8a53655936506",
+// // //     "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDTkwJ+AA9XQCSd\nO8N9M1y8AnW+o5w5DFZH8zhCZR+EBUOGVfgrJIAiZijb4NX1hrSl17atD2O5hRnV\nMpZkObOFJAz+5z98D0ADmxoaRjE1Uoz8j9hrhDX/KAUtv+pasp5MIYPTPYLwHla1\n+HYqbmcWv0XBSp3q1k96YohQtG3vWDREmJbYdg5KWwcyub19ESfNOHpKvhYPATtz\noFu5aw5tNcOkXE1ZGOX2ojXWD8Wc3Xjq4NUEywbLmOa1PkBRSYiJdCRMhsKd77ej\nmieK3q4ACGNc6+8U1uQXxKahq6WFGyWoQSM8TlyAt5HfwkrMTxdwBm29RHjPnru5\n20uWkk7HAgMBAAECggEADx/qRLGiZx1ZwLe+ANxEG9idLDSr/VQJcvlLI0vxVdG+\ngwLwS70/P7ZH43gOM5Aep+Bk2bhI68E9GIWWRLHvSGxMVYiYfDjm3Zsf4ZL0/5fY\nJlHuKbl41rW4sQ2QJk2wjUa0EszJ6Hpyvm11nRDpY7Hmvauk4F3Trq8OiZ5sYXiu\naj+ogWTsIffIzwiCtx7AeBMHqJh0stJjkbDn/zki9kHTmZxkRymgnOFstYAKWsNT\nX9kFcinsMmrJAfJpmjUzOWnOGgYnSsiKf8UQyctFP6sw2aBqG3g/+DE86AG0GiAv\n/AIMccUhsEqxlsajkS6Z+fcVW04uLTSGx+THqS5BmQKBgQD1DwRIY56WpUXrSsre\nPNC5XTrIcDAkGNarWpy2rlVVom2HifGW6NnqAeHfaQPjWJ/QuZ8WrBi/vadJxS8I\nOvp1dRajzFG85BorYjiq4z9bMPIHYBz1ZrWc75SQscB0i2nu4jaW+v+gKkis9unm\n+Y77T6ZwkPwcoyVPNigvAX4F8wKBgQDdBUV4hzuZJY0rtScc6GprVRRiznjkSSnU\nx2g0MxNqr77mEnCCxWJZo+DfTzmuo+H1nH+VMMmJGUF6JSYjj/QuNA5n+cXOwlAY\nc3UEuOLb9wHJEFsl1m/GcyVe0R8mfkswwJM9FouxDuKiKllhz65lpO8wdgVJkv/0\nVSsTg4sk3QKBgQCdnsgJa5HwoWNEgPnVUdaKs42AqLA+N3+z/Xc5BQ68ItpCSJaM\nkz6+hfFrSleG3lUE4q+R3KWahnjYOS0UJSM9c09ZkaytSyYN64I5YCs7E1NJLSfT\nK/n6dBrhqoL4M0eyr+ue1tiegzP1lGdD+hZeTI/obUjLfqAbv+C+wz30wwKBgGwB\nmXNO0ocCXLxRKC3uPaL5zp6CO32Da1e5omhv1Ts7atRPin+9KVSYytkVhCCdoVw+\n//HOB45hsyeXY83ZGQBDHA8fddSWDEIGmdaW6vWG/W5d+czBv5mAx3BQTSKocOIA\nGXOuwtDhb0rD2y37KUQul1xdMDRGC6JAxG4iyCpZAoGACsGs4PK9+kqoYjajv49Z\n7CPyDEIpP/mNBXcx3crdsglqhFDFpnOfkOnoiH/tkFIBA4ha7BFKxC/ktkLufRL+\n2b0iRVnVsn2nSbPn2ADpqksYZu8LvYAfZQI0TXr94RBeHgrEiqid6xzHDhbMd1Xv\nnuGHSlm+r+Z0PXfpfnXexac=\n-----END PRIVATE KEY-----\n",
+// // //     "client_email": "firebase-adminsdk-fbsvc@projetfirebasetest-28637.iam.gserviceaccount.com",
+// // //     "client_id": "109573566697500169053",
+// // //     "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+// // //     "token_uri": "https://oauth2.googleapis.com/token",
+// // //     "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+// // //     "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-fbsvc%40projetfirebasetest-28637.iam.gserviceaccount.com",
+// // //     "universe_domain": "googleapis.com"
+// // //   }
