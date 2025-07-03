@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\RendezVous;
 use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
 
 class ServiceController extends Controller
@@ -33,6 +35,7 @@ class ServiceController extends Controller
             'telephone' => 'nullable|string|max:20',
             'email' => 'nullable|email|unique:services,email|max:255',
             'prix_rdv' => 'nullable|numeric|min:0',
+            'nom_medecin' => 'nullable|string',
             'heure_ouverture' => 'nullable|date_format:H:i',
             'heure_fermeture' => 'nullable|date_format:H:i|after:heure_ouverture',
             'duree_moy_rdv' => 'nullable|string|max:50',
@@ -95,6 +98,7 @@ class ServiceController extends Controller
             'nom' => 'sometimes|required|string|max:255',
             'telephone' => 'nullable|string|max:20',
             'email' => 'nullable|email|unique:services,email,' . $id . '|max:255',
+            'nom_medecin' => 'nullable|string',
             'prix_rdv' => 'nullable|numeric|min:0',
             'heure_ouverture' => 'nullable|date_format:H:i',
             'heure_fermeture' => 'nullable|date_format:H:i|after:heure_ouverture',
@@ -163,4 +167,34 @@ class ServiceController extends Controller
             'message' => 'Service restored successfully'
         ], 200);
     }
+
+    public function rendezVousPourServicePrecis()
+    {
+        $user = Auth::guard('api')->user();
+        if ($user->hasRole('service_medical')) {
+            $rdvs = RendezVous::where('service_id', $user->service_voulu)->with('patient', 'service')->whereNull('date_rdv')->get();
+            return response()->json([
+                'success' => true,
+                'rdvs' => $rdvs,
+                'message' => 'endez-vous récupérés avec succès'
+            ], 200);
+        }
+    }
+
+    public function editerRendezVous(Request $request)
+    {
+        $rdv = RendezVous::findOrFail($request->appointment_id);
+        if ($rdv) {
+            $rdv->date_rdv = $request->date_rdv;
+            $rdv->save();
+
+            return response()->json([
+                'success' => true,
+                'data' => $rdv,
+                'message' => 'Rendez-vous modifié avec succès'
+            ], 200);
+
+        }
+    }
+
 }

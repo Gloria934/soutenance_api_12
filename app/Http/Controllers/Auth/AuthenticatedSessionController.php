@@ -25,11 +25,130 @@ class AuthenticatedSessionController extends Controller
     //             'password' => ['required', 'string'],
     //         ]);
 
+    //         $telephone = $request->input('telephone');
+    //         $password = $request->input('password');
+
+    //         $existTelepnone = User::where('telephone', $telephone)->exists();
+    //         if ($existTelepnone) {
+    //             $utilisateur = User::where('telephone', $telephone)->first();
+    //             if (Hash::check($password, $utilisateur->password)) {
+    //                 // $utilisateur = Auth::user();
+    //                 $token = $utilisateur->createToken('auth_token')->plainTextToken;
+
+    //                 return response()->json([
+    //                     'success' => true,
+    //                     'message' => 'Connexion réussie',
+    //                     'data' => [
+    //                         'user' => $utilisateur,
+    //                         'token' => $token,
+    //                     ],
+    //                     'role' => $utilisateur->getRoleNames()->first()
+    //                 ], 200);
+
+    //             } else {
+    //                 return response()->json([
+    //                     'success' => false,
+    //                     'error' => 'invalid_password',
+    //                     'message' => 'Mot de passe incorrect',
+    //                 ], 401);
+
+    //             }
+
+    //         } else {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'error' => 'user_not_found',
+    //                 'message' => 'Aucun utilisateur trouvé avec ce numéro de téléphone',
+    //             ], 404);
+
+    //         }
+
+
+
+
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'error' => 'server_error',
+    //             'message' => 'Une erreur serveur est survenue',
+    //             'details' => $e->getMessage(),
+    //         ], 500);
+    //     }
+    // }
+
+    public function store(Request $request): JsonResponse
+    {
+
+        $request->validate([
+            'telephone' => ['required', 'string'],
+            'password' => ['required', 'string'],
+        ]);
+
+        $telephone = $request->input('telephone');
+        $password = $request->input('password');
+
+        $utilisateur = User::where('telephone', $telephone)->first();
+
+        if ($utilisateur) {
+            if (Hash::check($password, $utilisateur->password)) {
+                $token = $utilisateur->createToken('auth_token')->plainTextToken;
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Connexion réussie',
+                    'data' => [
+                        'user' => $utilisateur,
+                        'token' => $token,
+                    ],
+                    'role' => $utilisateur->getRoleNames()->first()
+                ], 200);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'invalid_password',
+                    'message' => 'Mot de passe incorrect',
+                ], 401);
+            }
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Aucun utilisateur trouvé avec ce numéro de téléphone',
+            ], 404);
+        }
+
+    }
+
+    // public function store(Request $request): JsonResponse
+    // {
+    //     try {
+    //         $request->validate([
+    //             'telephone' => ['required', 'string'],
+    //             'password' => ['required', 'string'],
+    //         ]);
+
+    //         $user = User::where('telephone', $request->telephone)->first();
+
+    //         if (!$user) {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'error' => 'user_not_found',
+    //                 'message' => 'Aucun utilisateur trouvé avec ce numéro de téléphone',
+    //             ], 404);
+    //         }
+
+    //         if (!Hash::check($request->password, $user->password)) {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'error' => 'invalid_password',
+    //                 'message' => 'Mot de passe incorrect',
+    //             ], 401);
+    //         }
+
     //         if (!Auth::attempt($request->only('telephone', 'password'))) {
     //             return response()->json([
     //                 'success' => false,
     //                 'error' => 'authentication_failed',
-    //                 'message' => trans('auth.failed'),
+    //                 'message' => 'Échec de l\'authentification',
     //             ], 401);
     //         }
 
@@ -61,68 +180,6 @@ class AuthenticatedSessionController extends Controller
     //         ], 500);
     //     }
     // }
-    public function store(Request $request): JsonResponse
-    {
-        try {
-            $request->validate([
-                'telephone' => ['required', 'string'],
-                'password' => ['required', 'string'],
-            ]);
-
-            $user = User::where('telephone', $request->telephone)->first();
-
-            if (!$user) {
-                return response()->json([
-                    'success' => false,
-                    'error' => 'user_not_found',
-                    'message' => 'Aucun utilisateur trouvé avec ce numéro de téléphone',
-                ], 404);
-            }
-
-            if (!Hash::check($request->password, $user->password)) {
-                return response()->json([
-                    'success' => false,
-                    'error' => 'invalid_password',
-                    'message' => 'Mot de passe incorrect',
-                ], 401);
-            }
-
-            if (!Auth::attempt($request->only('telephone', 'password'))) {
-                return response()->json([
-                    'success' => false,
-                    'error' => 'authentication_failed',
-                    'message' => 'Échec de l\'authentification',
-                ], 401);
-            }
-
-            $user = Auth::user();
-            $token = $user->createToken('auth_token')->plainTextToken;
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Connexion réussie',
-                'data' => [
-                    'user' => $user,
-                    'token' => $token,
-                ],
-                'role' => $user->getRoleNames()->first()
-            ], 200);
-        } catch (ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'error' => 'validation_error',
-                'message' => 'Les données fournies sont invalides',
-                'errors' => $e->errors(),
-            ], 422);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'error' => 'server_error',
-                'message' => 'Une erreur serveur est survenue',
-                'details' => $e->getMessage(),
-            ], 500);
-        }
-    }
 
 
 

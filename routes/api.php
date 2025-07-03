@@ -42,59 +42,25 @@ Route::apiResource('formes', FormeController::class);
 Route::apiResource('allergies', AllergyController::class);
 Route::apiResource('services', ServiceController::class);
 Route::post('services/{id}/restore', [ServiceController::class, 'restore']);
+//
+Route::get('rendez-vous-pour-service-precis', [ServiceController::class, 'rendezVousPourServicePrecis']);//
+Route::post('editer-rendez-vous', [ServiceController::class, 'editerRendezVous']);//
+//
+
 Route::post('verify_user_number', [AuthenticatedSessionController::class, 'verifyUserNumber']);
 Route::apiResource('pharmaceutical_products', PharmaceuticalProductController::class);
 Route::put('pharmaceutical_products/{id}', [PharmaceuticalProductController::class, 'update']);
 // Route::delete('pharmaceutical_products/{id}', [PharmaceuticalProductController::class, 'delete']);
-Route::apiResource('ordonnance',OrdonnanceController::class);
-Route::put('ordonnance/{code_patient}', [PharmacyController::class, 'getOrdonnance']);
+Route::apiResource('ordonnance', OrdonnanceController::class);
+Route::put('ordonnance/{ordonnance}', [PharmacyController::class, 'getOrdonnances']);
 
-// Non traité
 
-// Route::get('/prescriptions', [PrescriptionController::class, 'index']);
-// Route::delete('/prescriptions/{id}', [PrescriptionController::class, 'destroy']);
-// Route::delete('/prescriptions/paid', [PrescriptionController::class, 'deletePaid']);
-// Route::put('/prescriptions/{id}/medicaments/{medicamentId}', [PrescriptionController::class, 'updateMedicament']);
 
-// Non traité
-// Route::post('/prescriptions', [PrescriptionController::class, 'store']);
-// Route::get('/patients', [PrescriptionController::class, 'getPatients']);
-// Route::get('/services', [PrescriptionController::class, 'getServices']);
 Route::get('/pharmaceutical-products', [PharmaceuticalProductController::class, 'index']);
 
 
 // en cours : Pour les notifications
 Route::post('/save-device-token', [NotificationController::class, 'saveDeviceToken'])->middleware('auth:sanctum');
-
-
-
-Route::get('/test-firebase', function () {
-    try {
-        $credentials = config('firebase.projects.default.credentials.file');
-        if (!$credentials) {
-            throw new \Exception('Firebase credentials not configured in config/firebase.php');
-        }
-
-        $credentialsPath = base_path($credentials);
-        if (!file_exists($credentialsPath)) {
-            throw new \Exception('Firebase credentials file does not exist at: ' . $credentialsPath);
-        }
-
-        if (!is_readable($credentialsPath)) {
-            throw new \Exception('Firebase credentials file is not readable at: ' . $credentialsPath);
-        }
-
-        $firebase = (new Factory)
-            ->withServiceAccount($credentialsPath)
-            ->createAuth();
-        return response()->json(['message' => 'Firebase initialized successfully']);
-    } catch (\Exception $e) {
-        \Illuminate\Support\Facades\Log::error('Firebase initialization failed: ' . $e->getMessage());
-        return response()->json([
-            'error' => 'Failed to initialize Firebase: ' . $e->getMessage(),
-        ], 500);
-    }
-});
 
 // Route::get('count', [RegisteredUserController::class, 'countAdmin']);
 Route::post('update-device-token', [DeviceTokenController::class, 'updateDeviceToken']);
@@ -108,12 +74,18 @@ Route::post('/notifications/{id}/reject', [SimpleNotificationController::class, 
 Route::delete('/notifications/{id}', [SimpleNotificationController::class, 'destroy']);
 
 Route::post('/user/{id}', [RegisteredUserController::class, 'checkRole'], );
+Route::get('/nextId', [RegisteredUserController::class, 'nextId']);
 Route::get('/fetch-all-personnels', [PersonnelController::class, 'fetchAllPersonnel']);
 Route::post('/scan', [PersonnelController::class, 'scanUser'], );
 Route::apiResource('/patients', PatientController::class);
 
+
 Route::apiResource('rendez-vous', RendezVousController::class);
+Route::post('rendez-vous-direct', [RendezVousController::class, 'storeDirect']);
 Route::get('rendez-vous-utilisateur', [RendezVousController::class, 'getUserRdv']);
+// Route suivante pour faire un enregistrement rapide d'un utilisateur par un personnel à l'accueil.
+// Données : nom_visiteur, prenom_visiteur, code_patient, service_id, date_rdv ...............
+Route::post('rendez-vous-rapide', [RendezVousController::class, 'rdvRapide']);
 
 
 Route::get('/rendez-vous-a-valider', [RendezVousController::class, 'rendezVousAValider'])->middleware(['auth:api']);

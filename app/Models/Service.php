@@ -14,11 +14,13 @@ class Service extends Model
         'nom',
         'telephone',
         'email',
+        'nom_medecin',
         'prix_rdv',
         'heure_ouverture',
         'heure_fermeture',
         'duree_moy_rdv',
         'sous_rdv',
+
     ];
 
 

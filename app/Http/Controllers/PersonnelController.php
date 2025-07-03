@@ -45,7 +45,7 @@ class PersonnelController extends Controller
 
         $personnels = User::whereNotNull('role_voulu')->get();
         $personnels = User::whereDoesntHave('roles', function ($query) {
-            $query->whereIn('name', ['admin', 'pending']);
+            $query->whereIn('name', ['admin', 'pending', 'patient']);
         })->with('roles:name')->get();
         if ($personnels != null) {
             return response()->json([

@@ -150,6 +150,15 @@ class RegisteredUserController extends Controller
         }
     }
 
+    public function nextId()
+    {
+        $nextId = User::all()->count() + 1;
+        return response()->json([
+            'message' => 'réussi',
+            'nextId' => $nextId,
+        ]);
+    }
+
 
     public function countAdmin(): JsonResponse
     {

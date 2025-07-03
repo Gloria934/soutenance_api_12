@@ -116,6 +116,50 @@ class RendezVousController extends Controller
             ], 422);
         }
 
+        $user = User::create(
+            [
+                'nom' => $request->nom_visiteur,
+                'prenom' => $request->prenom_visiteur,
+                'code_patient' => 'PAT-' . $this->nextId(),
+
+            ]
+        );
+        $user->assignRole('patient');
+
+
+
+        $rdv = RendezVous::create([
+            'nom_visiteur' => $request->nom_visiteur,
+            'prenom_visiteur' => $request->prenom_visiteur,
+            'numero_visiteur' => $request->numero_visiteur,
+            'patient_id' => $request->patient_id,
+            'service_id' => $request->service_id,
+            'date_rdv' => $request->date_rdv,
+            'statut' => StatutEnum::ENATTENTE->value,
+        ]);
+
+
+        return response()->json([
+            'message' => 'Rendez-vous créé avec succès ...',
+            'rdv' => $rdv
+        ], 200);
+    }
+    public function storeDirect(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'patient_id' => 'required',
+            'service_id' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 422,
+                'errors' => $validator->messages()
+            ], 422);
+        }
+
+
+
 
 
         $rdv = RendezVous::create([
@@ -135,13 +179,61 @@ class RendezVousController extends Controller
         ], 200);
     }
 
+    public function nextId()
+    {
+        $nextId = User::all()->count() + 1;
+        return $nextId;
+
+    }
+
+    public function rdvRapide(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'nom' => 'required',
+            'prenom' => 'required',
+            'code_patient' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 422,
+                'errors' => $validator->messages()
+            ], 422);
+        }
+        $user = User::create(
+            [
+                'nom' => $request->nom,
+                'prenom' => $request->prenom,
+                'code_patient' => $request->code_patient,
+            ]
+        );
+        $user->assignRole('patient');
+
+
+
+        $rdv = RendezVous::create([
+            'patient_id' => $user->id,
+            'nom_visiteur' => $request->nom,
+            'prenom_visiteur' => $request->prenom,
+            'service_id' => $request->service_id,
+            'date_rdv' => $request->date_rdv,
+            'statut' => StatutEnum::ENATTENTE->value,
+        ]);
+
+
+        return response()->json([
+            'message' => 'Rendez-vous créé avec succès ...',
+            'rdv' => $rdv
+        ], 200);
+    }
+
     /**
      * Display the specified resource.
      */
     public function show(string $id)
     {
         $user = User::findOrFail($id);
-        $rdvs = RendezVous::whereNotNull('date_rdv')->where('patient_id', $user->id)->with('patient', 'service')->get();
+        $rdvs = RendezVous::where('patient_id', $user->id)->with('patient', 'service')->get();
 
         return response()->json([
             'message' => 'succès',
@@ -153,9 +245,39 @@ class RendezVousController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+
+    public function update(Request $request, $id)
     {
-        //
+        $rdv = RendezVous::withTrashed()->find($id);
+
+        if (!$rdv) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Rendez-vous not found'
+            ], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+
+            'service_id' => 'required',
+
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors(),
+                'message' => 'Validation failed'
+            ], 422);
+        }
+
+        $rdv->update($request->all());
+
+        return response()->json([
+            'success' => true,
+            'data' => $rdv,
+            'message' => 'Rendez-vous updated successfully'
+        ], 200);
     }
 
     /**
