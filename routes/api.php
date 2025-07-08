@@ -21,6 +21,7 @@ use App\Http\Controllers\RendezVousController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SimpleNotificationController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Kreait\Firebase\Factory;
@@ -53,7 +54,8 @@ Route::put('pharmaceutical_products/{id}', [PharmaceuticalProductController::cla
 // Route::delete('pharmaceutical_products/{id}', [PharmaceuticalProductController::class, 'delete']);
 Route::apiResource('ordonnance', OrdonnanceController::class);
 Route::put('ordonnance/{ordonnance}', [PharmacyController::class, 'getOrdonnances']);
-
+Route::post('find-user-with-code-patient', [PatientController::class, 'findUserWithCodePatient']);
+Route::post('edit-patient', [RegisteredUserController::class, 'editPatientInfo']);
 
 
 Route::get('/pharmaceutical-products', [PharmaceuticalProductController::class, 'index']);

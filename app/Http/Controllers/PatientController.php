@@ -43,6 +43,20 @@ class PatientController extends Controller
     {
         //
     }
+    public function findUserWithCodePatient(Request $request)
+    {
+        $user = User::where('code_patient', $request->code_patient)->first();
+        if ($user) {
+            return response()->json([
+                'message' => 'success',
+                'user' => $user,
+            ], 200);
+        } else {
+            return response()->json([
+                'message' => 'Utilisateur non trouvé',
+            ], 401);
+        }
+    }
 
     /**
      * Remove the specified resource from storage.

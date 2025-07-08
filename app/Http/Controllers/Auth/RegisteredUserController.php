@@ -100,7 +100,7 @@ class RegisteredUserController extends Controller
                 $user->assignRole('admin');
             } elseif ($user->role_voulu == null) {
                 $user->assignRole('patient');
-                $user->code_patient = "PAT-$user->id";
+                $user->code_patient = "PAT-$user->id" . $this->generateCode();
                 $user->save();
             } else {
                 $user->assignRole('pending'); // Rôle temporaire jusqu'à approbation
@@ -149,13 +149,165 @@ class RegisteredUserController extends Controller
             ], 500);
         }
     }
+    public function editPatientInfo(Request $request): JsonResponse
+    {
+        \Log::info('Début de la méthode editPatientInfo', [
+            'request_data' => $request->all(),
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+
+        try {
+            // Validation des données
+            \Log::info('Validation des données en cours...');
+            $validatedData = $request->validate([
+                'nom' => ['required', 'string', 'max:255'],
+                'prenom' => ['required', 'string', 'max:255'],
+                'telephone' => ['required', 'string', 'max:20'],
+                'genre' => ['nullable', 'string'],
+                'date_naissance' => ['nullable', 'string'],
+                'npi' => ['nullable', 'string'],
+                'role_voulu' => ['nullable', 'string'],
+                'service_voulu' => ['nullable', 'string'],
+                'email' => ['required', 'string', 'email', 'max:255'],
+                'device_token' => ['nullable', 'string'],
+                'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            ]);
+            \Log::info('Données validées avec succès', ['validated_data' => $validatedData]);
+
+            // Recherche de l'utilisateur
+            \Log::info('Recherche de l\'utilisateur avec ID', ['user_id' => $request->id]);
+            $user = User::findOrFail($request->id);
+            \Log::info('Utilisateur trouvé', ['user' => $user->toArray()]);
+
+            // Mise à jour de l'utilisateur
+            \Log::info('Mise à jour des données de l\'utilisateur', [
+                'update_data' => [
+                    'telephone' => $request->telephone,
+                    'genre' => $request->genre,
+                    'date_naissance' => $request->date_naissance,
+                    'email' => $request->email,
+                    'device_token' => $request->device_token,
+                    'password' => '**** (hashed)',
+                ]
+            ]);
+            $user->update([
+                'telephone' => $request->telephone,
+                'genre' => $request->genre,
+                'date_naissance' => $request->date_naissance,
+                'email' => $request->email,
+                'device_token' => $request->device_token,
+                'password' => Hash::make($request->password),
+            ]);
+            \Log::info('Utilisateur mis à jour avec succès', ['updated_user' => $user->toArray()]);
+
+            // Création de notification si role_voulu est défini
+            if ($user->role_voulu != null) {
+                \Log::info('Création d\'une notification pour l\'administrateur', [
+                    'personnel_sante_id' => $user->id,
+                    'type' => 'personnel_registration',
+                    'status' => 'pending',
+                ]);
+                SimpleNotification::create([
+                    'personnel_sante_id' => $user->id,
+                    'type' => 'personnel_registration',
+                    'status' => 'pending',
+                ]);
+                \Log::info('Notification créée avec succès');
+            } else {
+                \Log::info('Aucune notification créée : role_voulu est null');
+            }
+
+            // Assignation du rôle
+            \Log::info('Vérification de l\'existence du rôle admin');
+            if (!User::role('admin')->exists()) {
+                \Log::info('Aucun admin trouvé, attribution du rôle admin à l\'utilisateur', ['user_id' => $user->id]);
+                $user->assignRole('admin');
+            } elseif ($user->role_voulu == null) {
+                \Log::info('role_voulu est null, attribution du rôle patient', ['user_id' => $user->id]);
+                $user->assignRole('patient');
+
+                $user->save();
+                \Log::info('Rôle patient attribué et code patient généré', ['code_patient' => $user->code_patient]);
+            } else {
+                \Log::info('Attribution du rôle pending en attendant approbation', ['user_id' => $user->id, 'role_voulu' => $user->role_voulu]);
+                $user->assignRole('pending');
+                $admin = User::role('admin')->select('device_token')->first();
+                \Log::info('Recherche de l\'admin pour notification', ['admin_device_token' => $admin ? $admin->device_token : null]);
+                if ($admin && $admin->device_token) {
+                    \Log::info('Envoi de la notification OneSignal à l\'admin', ['device_token' => $admin->device_token]);
+                    $this->sendOtpViaOneSignal($admin->device_token);
+                } else {
+                    \Log::warning('Aucun admin trouvé ou device_token manquant pour la notification');
+                }
+            }
+
+            // Déclenchement de l'événement Registered
+            \Log::info('Déclenchement de l\'événement Registered', ['user_id' => $user->id]);
+            event(new Registered($user));
+
+            // Connexion de l'utilisateur
+            \Log::info('Connexion de l\'utilisateur', ['user_id' => $user->id]);
+            Auth::login($user);
+
+            // Génération du token
+            \Log::info('Génération du token d\'authentification');
+            $token = $user->createToken('auth_token')->plainTextToken;
+            \Log::info('Token généré avec succès', ['token' => '**** (hidden for security)']);
+
+            // Réponse réussie
+            \Log::info('Réponse réussie envoyée', [
+                'message' => 'Utilisateur créé avec succès',
+                'user_id' => $user->id,
+                'role' => $user->getRoleNames()->first(),
+            ]);
+            return response()->json([
+                'message' => 'Utilisateur créé avec succès',
+                'user' => $user,
+                'token' => $token,
+                'role' => $user->getRoleNames()->first(),
+            ], 201);
+        } catch (ValidationException $e) {
+            // Erreurs de validation
+            \Log::error('Erreur de validation dans editPatientInfo', [
+                'errors' => $e->errors(),
+                'request_data' => $request->all(),
+            ]);
+            return response()->json([
+                'message' => 'Erreur de validation',
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            // Utilisateur non trouvé
+            \Log::error('Utilisateur non trouvé dans editPatientInfo', [
+                'user_id' => $request->id,
+                'exception' => $e->getMessage(),
+            ]);
+            return response()->json([
+                'message' => 'Utilisateur non trouvé',
+                'error' => $e->getMessage(),
+            ], 404);
+        } catch (Exception $e) {
+            // Autres erreurs
+            \Log::error('Erreur lors de l\'exécution de editPatientInfo', [
+                'exception' => $e->getMessage(),
+                'request_data' => $request->all(),
+                'stack_trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json([
+                'message' => 'Une erreur est survenue lors de l\'inscription',
+                'error' => $e->getMessage(),
+                'code' => $e->getCode(),
+            ], 500);
+        }
+    }
 
     public function nextId()
     {
         $nextId = User::all()->count() + 1;
         return response()->json([
             'message' => 'réussi',
-            'nextId' => $nextId,
+            'nextCode' => "PAT-$nextId" . $this->generateCode(),
         ]);
     }
 
@@ -182,6 +334,18 @@ class RegisteredUserController extends Controller
         return response()->json([
             'role' => $user->getRoleNames()->first(),
         ], 200);
+    }
+
+    public static function generateCode(): string
+    {
+        $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $code = '';
+
+        for ($i = 0; $i < 5; $i++) {
+            $code .= $characters[rand(0, strlen($characters) - 1)];
+        }
+
+        return $code;
     }
 
 

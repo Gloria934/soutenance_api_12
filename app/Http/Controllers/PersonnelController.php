@@ -26,9 +26,16 @@ class PersonnelController extends Controller
 
     public function updateRole(Request $request, $id)
     {
-        $request->validate(['role' => 'required|string']);
+        $request->validate([
+            'role' => 'required|string',
+            'service_id' => 'nullable'
+        ]);
         $user = User::findOrFail($id);
         $user->syncRoles([$request->role]);
+        if ($request->service_id) {
+            $user->service_voulu = $request->service_id;
+            $user->save();
+        }
         return response()->json([
             'success' => true,
             'message' => 'Rôle mis à jour avec succès.'
@@ -39,7 +46,7 @@ class PersonnelController extends Controller
     {
         $personnels = User::whereNotNull('role_voulu')->get();
         $personnels = User::whereDoesntHave('roles', function ($query) {
-            $query->whereIn('name', ['admin', 'patient', 'pending']);
+            $query->whereIn('name', ['admin',]);
         })->with('roles:name')->get();
         // $personnels = User::with('roles:name')->get();
 
