@@ -66,7 +66,16 @@ Route::post('/save-device-token', [NotificationController::class, 'saveDeviceTok
 
 // Route::get('count', [RegisteredUserController::class, 'countAdmin']);
 Route::post('update-device-token', [DeviceTokenController::class, 'updateDeviceToken']);
+
+// gestion des rôles
 Route::apiResource('roles', RoleController::class);
+Route::get('/users/{userId}/roles-permissions', [RoleController::class, 'getUserRolesAndPermissions']);
+Route::post('/users/{userId}/role', [RoleController::class, 'updatePersonnelRole']);
+Route::post('/users/{userId}/permissions', [RoleController::class, 'assignPermissions']);
+Route::get('/permissions', [RoleController::class, 'getPermissions']);
+
+
+
 Route::apiResource('personnels', PersonnelController::class);
 Route::post('/personnels/{id}/role', [PersonnelController::class, 'updateRole']);
 
