@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
@@ -85,6 +86,8 @@ class RolesSeeder extends Seeder
 
         // Rôles sans permissions pour l'instant
         // 'pending' et 'patient' n'ont pas de permissions assignées
+        $user = User::findOrFail(22);
+        $user->syncRoles(['service_medical']);
 
         \Log::info('Seeder de rôle terminé avec succès');
     }
