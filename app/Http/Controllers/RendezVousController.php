@@ -135,6 +135,7 @@ class RendezVousController extends Controller
             'patient_id' => $request->patient_id,
             'service_id' => $request->service_id,
             'date_rdv' => $request->date_rdv,
+            'code_rendez_vous' => "RDV-" . $this->generateCode(),
             'statut' => StatutEnum::ENATTENTE->value,
         ]);
 
@@ -144,11 +145,12 @@ class RendezVousController extends Controller
             'rdv' => $rdv
         ], 200);
     }
-    public function storeDirect(Request $request)
+    public function storeSpecialistRdv(Request $request)
     {
+        $user = Auth::guard('api')->user();
         $validator = Validator::make($request->all(), [
-            'patient_id' => 'required',
-            'service_id' => 'required',
+
+            'specialiste_id' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -163,12 +165,10 @@ class RendezVousController extends Controller
 
 
         $rdv = RendezVous::create([
-            'nom_visiteur' => $request->nom_visiteur,
-            'prenom_visiteur' => $request->prenom_visiteur,
-            'numero_visiteur' => $request->numero_visiteur,
-            'patient_id' => $request->patient_id,
-            'service_id' => $request->service_id,
-            'date_rdv' => $request->date_rdv,
+
+            'patient_id' => $user->id,
+            'specialiste_id' => $request->specialiste_id,
+            'code_rendez_vous' => "RDV-" . $this->generateCode(),
             'statut' => StatutEnum::ENATTENTE->value,
         ]);
 
@@ -177,6 +177,18 @@ class RendezVousController extends Controller
             'message' => 'Rendez-vous créé avec succès ...',
             'rdv' => $rdv
         ], 200);
+    }
+
+    public static function generateCode(): string
+    {
+        $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $code = '';
+
+        for ($i = 0; $i < 5; $i++) {
+            $code .= $characters[rand(0, strlen($characters) - 1)];
+        }
+
+        return $code;
     }
 
     public function nextId()
@@ -217,6 +229,7 @@ class RendezVousController extends Controller
             'prenom_visiteur' => $request->prenom,
             'service_id' => $request->service_id,
             'date_rdv' => $request->date_rdv,
+            'code_rendez_vous' => "RDV-" . $this->generateCode(),
             'statut' => StatutEnum::ENATTENTE->value,
         ]);
 

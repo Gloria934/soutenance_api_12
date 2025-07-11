@@ -21,6 +21,7 @@ use App\Http\Controllers\RendezVousController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SimpleNotificationController;
+use App\Http\Controllers\SpecialisteController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -93,11 +94,14 @@ Route::apiResource('/patients', PatientController::class);
 
 Route::apiResource('rendez-vous', RendezVousController::class);
 Route::post('rendez-vous-direct', [RendezVousController::class, 'storeDirect']);
+Route::post('rendez-vous-specialiste', [RendezVousController::class, 'storeSpecialistRdv']);
+
 Route::get('rendez-vous-utilisateur', [RendezVousController::class, 'getUserRdv']);
 // Route suivante pour faire un enregistrement rapide d'un utilisateur par un personnel à l'accueil.
 // Données : nom_visiteur, prenom_visiteur, code_patient, service_id, date_rdv ...............
 Route::post('rendez-vous-rapide', [RendezVousController::class, 'rdvRapide']);
 
+Route::apiResource('specialiste', SpecialisteController::class);
 
 Route::get('/rendez-vous-a-valider', [RendezVousController::class, 'rendezVousAValider'])->middleware(['auth:api']);
 

@@ -16,7 +16,7 @@ class RolesSeeder extends Seeder
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         // Créer des rôles
-        $roles = ['pending', 'admin', 'admin_pharmacie', 'personnel_accueil', 'pharmacie', 'service_medical', 'patient'];
+        $roles = ['pending', 'admin', 'admin_pharmacie', 'personnel_accueil', 'pharmacie', 'service_medical', 'spécialiste', 'patient'];
         foreach ($roles as $role) {
             Role::firstOrCreate(['name' => $role]);
         }
@@ -27,7 +27,7 @@ class RolesSeeder extends Seeder
         Permission::firstOrCreate(['name' => 'gerer_roles_utilisateur']);
         Permission::firstOrCreate(['name' => 'gerer_notifications']);
 
-        // Service médical
+        // Service médical et spécialiste
         Permission::firstOrCreate(['name' => 'voir_liste_rendez_vous']);
         Permission::firstOrCreate(['name' => 'definir_date_rendez_vous']);
         Permission::firstOrCreate(['name' => 'creer_ordonnance']);
@@ -61,6 +61,12 @@ class RolesSeeder extends Seeder
             'definir_date_rendez_vous',
             'creer_ordonnance'
         ]);
+        $specialisteRole = Role::findByName('spécialiste');
+        $specialisteRole->givePermissionTo([
+            'voir_liste_rendez_vous',
+            'definir_date_rendez_vous',
+            'creer_ordonnance'
+        ]);
 
         $personnelAccueilRole = Role::findByName('personnel_accueil');
         $personnelAccueilRole->givePermissionTo([
@@ -86,8 +92,8 @@ class RolesSeeder extends Seeder
 
         // Rôles sans permissions pour l'instant
         // 'pending' et 'patient' n'ont pas de permissions assignées
-        $user = User::findOrFail(22);
-        $user->syncRoles(['service_medical']);
+        // $user = User::findOrFail(22);
+        // $user->syncRoles(['service_medical']);
 
         \Log::info('Seeder de rôle terminé avec succès');
     }

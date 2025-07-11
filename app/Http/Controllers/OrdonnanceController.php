@@ -68,7 +68,9 @@ class OrdonnanceController extends Controller
             $ordonnance = Ordonnance::create([
                 'montant_total' => $validator['montant_total'],
                 'montant_paye' => 0, // Ajustez selon votre logique
+                'code_ordonnance' => "ORD-" . $this->generateCode(),
                 'patient_id' => $validator['patient_id'],
+
             ]);
             \Illuminate\Support\Facades\Log::info('Ordonnance créée', ['ordonnance_id' => $ordonnance->id]);
 
@@ -126,6 +128,17 @@ class OrdonnanceController extends Controller
 
 
 
+    public static function generateCode(): string
+    {
+        $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $code = '';
+
+        for ($i = 0; $i < 5; $i++) {
+            $code .= $characters[rand(0, strlen($characters) - 1)];
+        }
+
+        return $code;
+    }
     public function getUserOrdonnances()
     {
         $user = Auth::guard('api')->user();
@@ -139,7 +152,8 @@ class OrdonnanceController extends Controller
 
     public function findUserOrdonnance(Request $request)
     {
-        $medsPrescrits = MedicamentPrescrit::where('ordonnance_id', $request->id)->where('statut', true)->with('pharmaceutical_product')->get();
+        $ordonnance = Ordonnance::where('code_ordonnance', $request->code_ordonnance)->first();
+        $medsPrescrits = MedicamentPrescrit::where('ordonnance_id', $ordonnance->id)->where('statut', true)->with('pharmaceutical_product')->get();
         return response()->json([
             'message' => 'succès',
             'medicaments' => $medsPrescrits,
@@ -149,7 +163,8 @@ class OrdonnanceController extends Controller
 
     public function invaliderOrdonnance(Request $request)
     {
-        $ordonnance = Ordonnance::findOrFail($request->id);
+        // $ordonnance = Ordonnance::findOrFail($request->id);
+        $ordonnance = Ordonnance::where('code_ordonnance', $request->code_ordonnance)->first();
         $ordonnance->statut = true;
         $ordonnance->save();
         return response()->json([
