@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\AnalyseController;
 use App\Http\Controllers\API\AllergyController;
 use App\Http\Controllers\API\CategoryController;
 use App\Http\Controllers\API\ClasseController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\ConsultationController;
 use App\Http\Controllers\DeviceTokenController;
+use App\Http\Controllers\LangueController;
 use App\Http\Controllers\OrdonnanceController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PersonnelController;
@@ -22,6 +24,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SimpleNotificationController;
 use App\Http\Controllers\SpecialisteController;
+use App\Http\Controllers\SpecialiteController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -46,7 +49,11 @@ Route::apiResource('services', ServiceController::class);
 Route::post('services/{id}/restore', [ServiceController::class, 'restore']);
 //
 Route::get('rendez-vous-pour-service-precis', [ServiceController::class, 'rendezVousPourServicePrecis']);//
+Route::get('get-analyses-appointments', [AnalyseController::class, 'getAnalyseAppointments']);//
+
 Route::post('editer-rendez-vous', [ServiceController::class, 'editerRendezVous']);//
+Route::post('editer-analyse', [AnalyseController::class, 'editerAnalyse']);//
+
 //
 
 Route::post('verify_user_number', [AuthenticatedSessionController::class, 'verifyUserNumber']);
@@ -94,14 +101,25 @@ Route::apiResource('/patients', PatientController::class);
 
 Route::apiResource('rendez-vous', RendezVousController::class);
 Route::post('rendez-vous-direct', [RendezVousController::class, 'storeDirect']);
+Route::get('/rendez-vous/{specialist}/for_auth_user', [RendezVousController::class, 'getUserRdvSpecialiste']);
 Route::post('rendez-vous-specialiste', [RendezVousController::class, 'storeSpecialistRdv']);
+Route::post('rendez-vous-analyse', [AnalyseController::class, 'storeAnalyseRdv']);
 
+Route::apiResource('specialite', SpecialiteController::class);
+Route::get('user-specialite', [SpecialiteController::class, 'getUserSpecialites']);
+Route::get('find-user-specialite', [SpecialiteController::class, 'findUserSpecialite']);
+Route::apiResource('langues', LangueController::class);
+Route::post('specialiste-langue', [SpecialiteController::class, 'enregistrerSpecialiste']);
+Route::get('specialiste/{specialiste}/info', [SpecialiteController::class, 'getSpecialistInfo']);
 Route::get('rendez-vous-utilisateur', [RendezVousController::class, 'getUserRdv']);
 // Route suivante pour faire un enregistrement rapide d'un utilisateur par un personnel à l'accueil.
 // Données : nom_visiteur, prenom_visiteur, code_patient, service_id, date_rdv ...............
 Route::post('rendez-vous-rapide', [RendezVousController::class, 'rdvRapide']);
+Route::apiResource('analyses', AnalyseController::class);
+Route::get('auth-analyses', [AnalyseController::class, 'getAuthAnalyses']);
 
-Route::apiResource('specialiste', SpecialisteController::class);
+
+// Route::apiResource('specialiste', SpecialisteController::class);
 
 Route::get('/rendez-vous-a-valider', [RendezVousController::class, 'rendezVousAValider'])->middleware(['auth:api']);
 
@@ -109,9 +127,13 @@ Route::post('/save_ordonnance', [OrdonnanceController::class, 'store']);
 Route::get('/ordonnances-utilisateur', [OrdonnanceController::class, 'getUserOrdonnances']);
 Route::post('find-ordonnance', [OrdonnanceController::class, 'findUserOrdonnance']);
 Route::post('invalider-ordonnance', [OrdonnanceController::class, 'invaliderOrdonnance']);
+Route::post('invalider-analyse', [AnalyseController::class, 'invaliderAnalyse']);
+
 
 Route::post('/update_ordonnance', [OrdonnanceController::class, 'updateOrdonnance']);
 
 Route::post('/update_consultation', [ConsultationController::class, 'updateConsultation']);
+Route::post('/update_analyse', [AnalyseController::class, 'updateAnalyse']);
+
 Route::get('accueil', [RendezVousController::class, 'accueil']);
 Route::apiResource('/consultations', ConsultationController::class);

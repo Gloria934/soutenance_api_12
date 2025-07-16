@@ -48,7 +48,7 @@ class RoleController extends Controller
         ], 200);
     }
 
-    
+
 
     // Mettre à jour le rôle d'un utilisateur
     public function updatePersonnelRole(Request $request, $userId)

@@ -57,6 +57,10 @@ class RendezVous extends Model
     {
         return $this->belongsTo(Service::class);
     }
+    public function specialiste()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function patient()
     {

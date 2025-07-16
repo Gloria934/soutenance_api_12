@@ -17,12 +17,12 @@ class ConsultationController extends Controller
     public function index()
     {
         $user = Auth::guard('api')->user();
-        $consultations = RendezVous::whereNull('date_rdv')->where('patient_id',$user->id)->with('patient', 'service')->get();
+        $consultations = RendezVous::whereNull('date_rdv')->whereNotNull('service_id')->where('patient_id', $user->id)->with('patient', 'service')->get();
 
         return response()->json([
-            'message'=>'succès',
-            'consultations'=>$consultations,
-        ],200);
+            'message' => 'succès',
+            'consultations' => $consultations,
+        ], 200);
     }
 
     /**
@@ -45,7 +45,7 @@ class ConsultationController extends Controller
      * Update the specified resource in storage.
      */
 
-     public function updateConsultation(Request $request)
+    public function updateConsultation(Request $request)
     {
         try {
             // Validate request data

@@ -90,6 +90,9 @@ class OrdonnanceController extends Controller
 
                     // Ajoutez 'pharmaceutical_product_id' si nécessaire
                 ]);
+                $medicament = PharmaceuticalProduct::find($medicamentPrescrit['pharmaceutical_product_id']);
+                $medicament->stock -= $medicamentPrescrit['quantite'];
+                $medicament->save();
             }
             \Illuminate\Support\Facades\Log::info('Médicaments prescrits créés avec succès');
 

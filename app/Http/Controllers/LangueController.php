@@ -2,31 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-
+use App\Models\Langue;
 use Illuminate\Http\Request;
 
-class SpecialisteController extends Controller
+class LangueController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-
-        $specialistes = User::role('spécialiste')->get();
-        if ($specialistes) {
+        $langues = Langue::all();
+        if ($langues) {
             return response()->json([
-                'success' => true,
+                'message' => 'Succès',
+                'langues' => $langues,
 
-                'specialistes' => $specialistes,
-                'message' => 'Spécialistes récupérés avec succès.'
             ], 200);
         } else {
             return response()->json([
-                'success' => false,
-                'message' => ' Aucun Spécialiste trouvé.'
-            ], 400);
+                'message' => 'Liste de langue vide',
+            ], 210);
+
         }
     }
 

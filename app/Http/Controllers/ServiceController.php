@@ -172,7 +172,7 @@ class ServiceController extends Controller
     {
         $user = Auth::guard('api')->user();
         if ($user->hasRole('service_medical')) {
-            $rdvs = RendezVous::where('service_id', $user->service_voulu)->with('patient', 'service')->whereNull('date_rdv')->get();
+            $rdvs = RendezVous::where('service_id', $user->service_voulu)->whereNull('specialiste_id')->with('patient', 'service')->whereNull('date_rdv')->get();
             return response()->json([
                 'success' => true,
                 'rdvs' => $rdvs,

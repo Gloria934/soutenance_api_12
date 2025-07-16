@@ -10,9 +10,12 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::table('rendez_vous', function (Blueprint $table) {
-            $table->string('code_rendez_vous')->nullable()->after('date_rdv');
-
+        Schema::create('analyses', function (Blueprint $table) {
+            $table->id();
+            $table->string('nom');
+            $table->string('description');
+            $table->float('prix');
+            $table->timestamps();
         });
     }
 
@@ -21,8 +24,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::table('rendez_vous', function (Blueprint $table) {
-            $table->dropColumn('code_rendez_vous');
-        });
+        Schema::dropIfExists('analyses');
     }
 };

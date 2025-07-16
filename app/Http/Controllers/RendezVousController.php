@@ -18,9 +18,26 @@ class RendezVousController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+    // cette fonction permet de récupérer les rendez-vous des services uniquement  
     public function index()
     {
-        $rdvs = RendezVous::with('patient', 'service')->get();
+        $rdvs = RendezVous::whereNull('specialiste_id')->whereNotNull('service_id')->with('patient', 'service')->get();
+        if ($rdvs != null) {
+            return response()->json([
+                'message' => 'réussite',
+                'rdvs' => $rdvs,
+
+            ], 200);
+        }
+
+    }
+
+    // fonction pour récupérer la liste des rendez-vous auprès des spécialistes pour un patient uniquement
+    public function getUserRdvSpecialiste($specialist_id)
+    {
+        $user = Auth::guard('api')->user();
+        $rdvs = RendezVous::whereNull('service_id')->where('specialiste_id', $specialist_id)->where('patient_id', $user->id)->with('patient', 'specialiste')->get();
         if ($rdvs != null) {
             return response()->json([
                 'message' => 'réussite',
@@ -59,6 +76,43 @@ class RendezVousController extends Controller
         ], 200);
     }
 
+
+    public function storeDirect(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'patient_id' => 'required',
+            // 'service_id' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 422,
+                'errors' => $validator->messages()
+            ], 422);
+        }
+
+
+
+
+
+        $rdv = RendezVous::create([
+            'nom_visiteur' => $request->nom_visiteur,
+            'prenom_visiteur' => $request->prenom_visiteur,
+            'numero_visiteur' => $request->numero_visiteur,
+            'patient_id' => $request->patient_id,
+            'service_id' => $request->service_id,
+            'date_rdv' => $request->date_rdv,
+            'code_rendez_vous' => "RDV-" . $this->generateCode(),
+            'statut' => StatutEnum::ENATTENTE->value,
+        ]);
+
+
+        return response()->json([
+            'message' => 'Rendez-vous créé avec succès ...',
+            'rdv' => $rdv
+        ], 200);
+    }
+
     public function rendezVousAValider()
     {
         // Vérifier si l'utilisateur est authentifié
@@ -91,13 +145,18 @@ class RendezVousController extends Controller
     public function getUserRdv()
     {
         $user = Auth::guard('api')->user();
-        $rdvs = RendezVous::whereNotNull('date_rdv')->where('patient_id', $user->id)->with('patient', 'service')->get();
+        $rdvs = RendezVous::whereNotNull('date_rdv')->where('patient_id', $user->id)->whereNotNull('service_id')->with('patient', 'service')->get();
 
         return response()->json([
             'message' => 'succès',
             'rdvs' => $rdvs,
         ], 200);
     }
+
+
+
+
+
 
     /**
      * Store a newly created resource in storage.
