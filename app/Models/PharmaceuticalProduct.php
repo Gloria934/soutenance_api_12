@@ -47,7 +47,7 @@ class PharmaceuticalProduct extends Model
         'prix' => 'float',
         'date_expiration' => 'datetime',
         'stock' => 'int',
-        
+
     ];
 
 
@@ -78,11 +78,11 @@ class PharmaceuticalProduct extends Model
         return $this->belongsTo(Classe::class);
     }
 
-    public function category()
+    public function categorie()
     {
         return $this->belongsTo(Category::class);
     }
-    public function sousCategory()
+    public function sousCategorie()
     {
         return $this->belongsTo(SousCategory::class);
     }
