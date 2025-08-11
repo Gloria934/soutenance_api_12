@@ -45,6 +45,7 @@ class RendezVous extends Model
         'date_rdv',
         'patient_id',
         'statut',
+        'type',
         'service_id',
         'code_rendez_vous',
         'specialiste_id',

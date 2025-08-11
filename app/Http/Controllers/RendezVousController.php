@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\StatutEnum;
 use App\Models\Ordonnance;
 use App\Models\RendezVous;
+use App\Models\Service;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -105,6 +106,14 @@ class RendezVousController extends Controller
             'code_rendez_vous' => "RDV-" . $this->generateCode(),
             'statut' => StatutEnum::ENATTENTE->value,
         ]);
+        $service = Service::findOrFail($request->service_id);
+        if ($service != null && $service->sous_rdv == true) {
+            $rdv->type = "rendez-vous";
+            $rdv->save();
+        } elseif ($service != null && $service->sous_rdv == false) {
+            $rdv->type = "consultation";
+            $rdv->save();
+        }
 
 
         return response()->json([
@@ -145,7 +154,7 @@ class RendezVousController extends Controller
     public function getUserRdv()
     {
         $user = Auth::guard('api')->user();
-        $rdvs = RendezVous::whereNotNull('date_rdv')->where('patient_id', $user->id)->whereNotNull('service_id')->with('patient', 'service')->get();
+        $rdvs = RendezVous::where('patient_id', $user->id)->where('type', 'rendez-vous')->whereNotNull('service_id')->with('patient', 'service')->get();
 
         return response()->json([
             'message' => 'succès',
@@ -179,12 +188,11 @@ class RendezVousController extends Controller
             [
                 'nom' => $request->nom_visiteur,
                 'prenom' => $request->prenom_visiteur,
-                'code_patient' => 'PAT-' . $this->nextId(),
+                'code_patient' => 'PAT-' . $this->generateCode(),
 
             ]
         );
         $user->assignRole('patient');
-
 
 
         $rdv = RendezVous::create([
@@ -196,7 +204,17 @@ class RendezVousController extends Controller
             'date_rdv' => $request->date_rdv,
             'code_rendez_vous' => "RDV-" . $this->generateCode(),
             'statut' => StatutEnum::ENATTENTE->value,
+
+
         ]);
+        $service = Service::findOrFail($request->service_id);
+        if ($service != null && $service->sous_rdv == true) {
+            $rdv->type = "rendez-vous";
+            $rdv->save();
+        } elseif ($service != null && $service->sous_rdv == false) {
+            $rdv->type = "consultation";
+            $rdv->save();
+        }
 
 
         return response()->json([
@@ -229,6 +247,7 @@ class RendezVousController extends Controller
             'specialiste_id' => $request->specialiste_id,
             'code_rendez_vous' => "RDV-" . $this->generateCode(),
             'statut' => StatutEnum::ENATTENTE->value,
+            'type' => "spécialiste",
         ]);
 
 
@@ -291,6 +310,14 @@ class RendezVousController extends Controller
             'code_rendez_vous' => "RDV-" . $this->generateCode(),
             'statut' => StatutEnum::ENATTENTE->value,
         ]);
+        $service = Service::findOrFail($request->service_id);
+        if ($service != null && $service->sous_rdv == true) {
+            $rdv->type = "rendez-vous";
+            $rdv->save();
+        } elseif ($service != null && $service->sous_rdv == false) {
+            $rdv->type = "consultation";
+            $rdv->save();
+        }
 
 
         return response()->json([

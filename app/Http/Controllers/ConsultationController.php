@@ -17,7 +17,7 @@ class ConsultationController extends Controller
     public function index()
     {
         $user = Auth::guard('api')->user();
-        $consultations = RendezVous::whereNull('date_rdv')->whereNotNull('service_id')->where('patient_id', $user->id)->with('patient', 'service')->get();
+        $consultations = RendezVous::whereNull('date_rdv')->whereNotNull('service_id')->where('patient_id', $user->id)->where('type', 'consultation')->with('patient', 'service')->get();
 
         return response()->json([
             'message' => 'succès',

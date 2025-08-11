@@ -17,6 +17,7 @@ use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PersonnelController;
 use App\Http\Controllers\PharmaceuticalProductController;
 use App\Http\Controllers\PharmacyController;
+use App\Http\Controllers\PlanningController;
 use App\Http\Controllers\PrescriptionController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RendezVousController;
@@ -134,6 +135,9 @@ Route::post('/update_ordonnance', [OrdonnanceController::class, 'updateOrdonnanc
 
 Route::post('/update_consultation', [ConsultationController::class, 'updateConsultation']);
 Route::post('/update_analyse', [AnalyseController::class, 'updateAnalyse']);
+Route::apiResource('/planning', PlanningController::class);
+Route::get('/user_planning', [PlanningController::class, 'authenticatedUserPlannings']);
+
 
 Route::get('accueil', [RendezVousController::class, 'accueil']);
 Route::apiResource('/consultations', ConsultationController::class);
