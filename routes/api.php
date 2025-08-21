@@ -137,7 +137,7 @@ Route::post('/update_consultation', [ConsultationController::class, 'updateConsu
 Route::post('/update_analyse', [AnalyseController::class, 'updateAnalyse']);
 Route::apiResource('/planning', PlanningController::class);
 Route::get('/user_planning', [PlanningController::class, 'authenticatedUserPlannings']);
-
+Route::get('/service_planning', [PlanningController::class, 'authenticatedServicePlannings']);
 
 Route::get('accueil', [RendezVousController::class, 'accueil']);
 Route::apiResource('/consultations', ConsultationController::class);

@@ -157,10 +157,18 @@ class OrdonnanceController extends Controller
     {
         $ordonnance = Ordonnance::where('code_ordonnance', $request->code_ordonnance)->first();
         $medsPrescrits = MedicamentPrescrit::where('ordonnance_id', $ordonnance->id)->where('statut', true)->with('pharmaceutical_product')->get();
-        return response()->json([
-            'message' => 'succès',
-            'medicaments' => $medsPrescrits,
-        ], 200);
+        if ($ordonnance->statut == true) {
+            return response()->json([
+                'message' => 'Ordonnance déjà encaissée.',
+                'medicaments' => $medsPrescrits,
+            ], 201);
+        } else if ($ordonnance->statut == false) {
+
+            return response()->json([
+                'message' => 'succès',
+                'medicaments' => $medsPrescrits,
+            ], 200);
+        }
 
     }
 
@@ -168,14 +176,22 @@ class OrdonnanceController extends Controller
     {
         // $ordonnance = Ordonnance::findOrFail($request->id);
         $ordonnance = Ordonnance::where('code_ordonnance', $request->code_ordonnance)->first();
-        $ordonnance->statut = true;
-        $ordonnance->save();
-        return response()->json([
-            'message' => 'succès',
-            'ordonnance' => $ordonnance,
-        ], 200);
-
+        if ($ordonnance->statut == true) {
+            return response()->json([
+                'message' => 'Ordonnance déjà encaissée.',
+                'ordonnance' => $ordonnance,
+            ], 201);
+        } elseif ($ordonnance->statut == false) {
+            $ordonnance->statut = true;
+            $ordonnance->save();
+            return response()->json([
+                'message' => 'succès',
+                'ordonnance' => $ordonnance,
+            ], 200);
+        }
     }
+
+
 
     public function updateOrdonnance(Request $request)
     {

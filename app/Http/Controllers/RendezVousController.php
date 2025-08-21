@@ -23,13 +23,54 @@ class RendezVousController extends Controller
     // cette fonction permet de récupérer les rendez-vous des services uniquement  
     public function index()
     {
-        $rdvs = RendezVous::whereNull('specialiste_id')->whereNotNull('service_id')->with('patient', 'service')->get();
-        if ($rdvs != null) {
-            return response()->json([
-                'message' => 'réussite',
-                'rdvs' => $rdvs,
+        $user = Auth::guard('api')->user();
+        if ($user->hasRole('service_medical')) {
+            $service = Service::findOrFail($user->service_voulu);
 
-            ], 200);
+            $rdvs = RendezVous::whereNull('specialiste_id')->where('service_id', $service->id)->with('patient', 'service')->get();
+            if ($rdvs != null) {
+                return response()->json([
+                    'message' => 'réussite',
+                    'rdvs' => $rdvs,
+
+                ], 200);
+
+            } else {
+                return response()->json([
+                    'message' => 'Aucun rendez-vous disponible',
+                    'rdvs' => $rdvs,
+
+                ], 201);
+            }
+
+        } elseif ($user->hasRole('spécialiste')) {
+            $rdvs = RendezVous::whereNull('service_id')->where('specialiste_id', $user->id)->with('patient')->get();
+            if ($rdvs != null) {
+                return response()->json([
+                    'message' => 'réussite',
+                    'rdvs' => $rdvs,
+
+                ], 200);
+
+            } else {
+                return response()->json([
+                    'message' => 'Aucun rendez-vous disponible',
+                    'rdvs' => $rdvs,
+
+                ], 201);
+            }
+        } else {
+
+            // Ancien code
+
+            $rdvs = RendezVous::whereNull('specialiste_id')->whereNotNull('service_id')->with('patient', 'service')->get();
+            if ($rdvs != null) {
+                return response()->json([
+                    'message' => 'réussite',
+                    'rdvs' => $rdvs,
+
+                ], 200);
+            }
         }
 
     }
