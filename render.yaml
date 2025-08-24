@@ -1,5 +1,9 @@
 # Blueprint for deploying the Laravel API on Render
 
+databases:
+  - name: my-api-database
+    plan: free # Change to a paid plan for production use
+
 services:
   # Web Service for the Laravel application
   - type: web
@@ -26,32 +30,11 @@ services:
       - key: LOG_CHANNEL
         value: stderr
       - key: DB_CONNECTION
-        value: pgsql # Using PostgreSQL
-      - key: DB_HOST
-        fromService:
-          type: "postgres"
+        value: pgsql
+      - key: DATABASE_URL # Laravel will automatically use this
+        fromDatabase:
           name: my-api-database
-          property: host
-      - key: DB_PORT
-        fromService:
-          type: "postgres"
-          name: my-api-database
-          property: port
-      - key: DB_DATABASE
-        fromService:
-          type: "postgres"
-          name: my-api-database
-          property: database
-      - key: DB_USERNAME
-        fromService:
-          type: "postgres"
-          name: my-api-database
-          property: user
-      - key: DB_PASSWORD
-        fromService:
-          type: "postgres"
-          name: my-api-database
-          property: password
+          property: connectionString
       - key: REDIS_HOST
         fromService:
           type: redis
@@ -67,11 +50,6 @@ services:
           type: redis
           name: my-api-cache
           property: password
-
-  # "postgres"QL Database
-  - type: "postgres"
-    name: my-api-database
-    plan: free # Change to a paid plan for production use
 
   # Redis instance for Caching and Queues
   - type: redis
@@ -96,31 +74,10 @@ services:
         value: stderr
       - key: DB_CONNECTION
         value: pgsql
-      - key: DB_HOST
-        fromService:
-          type: "postgres"
+      - key: DATABASE_URL # Laravel will automatically use this
+        fromDatabase:
           name: my-api-database
-          property: host
-      - key: DB_PORT
-        fromService:
-          type: "postgres"
-          name: my-api-database
-          property: port
-      - key: DB_DATABASE
-        fromService:
-          type: "postgres"
-          name: my-api-database
-          property: database
-      - key: DB_USERNAME
-        fromService:
-          type: "postgres"
-          name: my-api-database
-          property: user
-      - key: DB_PASSWORD
-        fromService:
-          type: "postgres"
-          name: my-api-database
-          property: password
+          property: connectionString
       - key: REDIS_HOST
         fromService:
           type: redis
