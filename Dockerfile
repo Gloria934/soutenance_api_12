@@ -1,16 +1,9 @@
-# Étape 1: Installer les dépendances avec Composer
-FROM composer:2.5 as vendor
-WORKDIR /app
-COPY composer.json composer.lock ./
-RUN composer install --no-interaction --no-dev --prefer-dist
-
-# Étape 2: Construire l'image finale de l'application
+# Utiliser une image PHP de base
 FROM php:8.2-fpm-alpine
 
-# Installer les dépendances système et les extensions PHP nécessaires pour Laravel
+# Installer les dépendances système et les extensions PHP
 RUN apk add --no-cache \
       nginx \
-      supervisor \
       libzip-dev \
       libpng-dev \
       jpeg-dev \
@@ -20,28 +13,29 @@ RUN apk add --no-cache \
       && docker-php-ext-configure gd --with-freetype --with-jpeg \
       && docker-php-ext-install pdo pdo_mysql zip bcmath gd
 
-# Créer les répertoires et copier les fichiers de configuration
-RUN mkdir -p /run/nginx /var/www/html
+# Installer Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Définir le répertoire de travail
 WORKDIR /var/www/html
 
-# Copier les dépendances Composer de l'étape précédente
-COPY --from=vendor /app/vendor /var/www/html/vendor
-
-# Copier le code de l'application
+# Copier tous les fichiers de l'application
 COPY . .
 
-# Créer le fichier .env à partir de l'exemple
+# Créer le fichier .env et générer la clé d'application AVANT composer install
 RUN cp .env.example .env
+RUN php artisan key:generate
 
-# Définir les permissions pour le stockage et le cache de Laravel
+# Lancer composer install maintenant que l'application est prête
+# --optimize-autoloader est une bonne pratique pour la production
+RUN composer install --no-interaction --no-dev --prefer-dist --optimize-autoloader
+
+# Définir les bonnes permissions pour le stockage et le cache
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Générer la clé d'application Laravel
-RUN php artisan key:generate
-
-# Exposer le port 80 pour le serveur web
+# Exposer le port 80
 EXPOSE 80
 
-# Définir le script de démarrage
+# Lancer le serveur
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=80"]
