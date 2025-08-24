@@ -19,16 +19,19 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Définir le répertoire de travail
 WORKDIR /var/www/html
 
-# Copier tous les fichiers de l'application
+# Copier les fichiers composer et installer les dépendances SANS scripts
+COPY composer.json composer.lock ./
+RUN composer install --no-interaction --no-dev --prefer-dist --no-scripts
+
+# Copier le reste du code de l'application
 COPY . .
 
-# Créer le fichier .env et générer la clé d'application AVANT composer install
+# Créer le .env et générer la clé. Ça fonctionne car /vendor existe.
 RUN cp .env.example .env
 RUN php artisan key:generate
 
-# Lancer composer install maintenant que l'application est prête
-# --optimize-autoloader est une bonne pratique pour la production
-RUN composer install --no-interaction --no-dev --prefer-dist --optimize-autoloader
+# Exécuter les scripts Composer qui ont été sautés
+RUN composer run-script post-autoload-dump --no-interaction --no-dev
 
 # Définir les bonnes permissions pour le stockage et le cache
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
