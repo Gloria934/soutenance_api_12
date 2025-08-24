@@ -29,27 +29,27 @@ services:
         value: pgsql # Using PostgreSQL
       - key: DB_HOST
         fromService:
-          type: postgres
+          type: "postgres"
           name: my-api-database
           property: host
       - key: DB_PORT
         fromService:
-          type: postgres
+          type: "postgres"
           name: my-api-database
           property: port
       - key: DB_DATABASE
         fromService:
-          type: postgres
+          type: "postgres"
           name: my-api-database
           property: database
       - key: DB_USERNAME
         fromService:
-          type: postgres
+          type: "postgres"
           name: my-api-database
           property: user
       - key: DB_PASSWORD
         fromService:
-          type: postgres
+          type: "postgres"
           name: my-api-database
           property: password
       - key: REDIS_HOST
@@ -68,8 +68,8 @@ services:
           name: my-api-cache
           property: password
 
-  # PostgreSQL Database
-  - type: postgres
+  # "postgres"QL Database
+  - type: "postgres"
     name: my-api-database
     plan: free # Change to a paid plan for production use
 
@@ -98,27 +98,27 @@ services:
         value: pgsql
       - key: DB_HOST
         fromService:
-          type: postgres
+          type: "postgres"
           name: my-api-database
           property: host
       - key: DB_PORT
         fromService:
-          type: postgres
+          type: "postgres"
           name: my-api-database
           property: port
       - key: DB_DATABASE
         fromService:
-          type: postgres
+          type: "postgres"
           name: my-api-database
           property: database
       - key: DB_USERNAME
         fromService:
-          type: postgres
+          type: "postgres"
           name: my-api-database
           property: user
       - key: DB_PASSWORD
         fromService:
-          type: postgres
+          type: "postgres"
           name: my-api-database
           property: password
       - key: REDIS_HOST
