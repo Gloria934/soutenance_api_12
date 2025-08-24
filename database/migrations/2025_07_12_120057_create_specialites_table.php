@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('specialites', function (Blueprint $table) {
             $table->id();
             $table->string('description')->nullable();
-            $table->foreignId('specialiste_id')->constrained('users')->onUpdate('cascade');
+            $table->foreignId('specialiste_id')->constrained('users')->onUpdate('cascade')->onDelete('cascade');
             $table->float('tarif');
             $table->softDeletes();
             $table->timestamps();

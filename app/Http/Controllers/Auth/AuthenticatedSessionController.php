@@ -99,8 +99,10 @@ class AuthenticatedSessionController extends Controller
                     'data' => [
                         'user' => $utilisateur,
                         'token' => $token,
+                        'roles' => $utilisateur->getRoleNames(),
+                        'permissions' => $utilisateur->getAllPermissions()->pluck('name'),
                     ],
-                    'role' => $utilisateur->getRoleNames()->first()
+
                 ], 200);
             } else {
                 return response()->json([

@@ -85,6 +85,7 @@ class SpecialiteController extends Controller
         try {
             // Valider les données d'entrée
             $validated = $request->validate([
+                'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'tarif' => 'required|numeric',
                 'description' => 'required|string',
                 'langue_ids' => 'required|array',
@@ -138,6 +139,40 @@ class SpecialiteController extends Controller
                     'langue_id' => $langue_id,
                     'specialite_id' => $specialite->id,
                 ]);
+            }
+
+            try {
+                // Vérifiez si le fichier est reçu
+                if (!$request->hasFile('image') || !$request->file('image')->isValid()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Aucun fichier image valide reçu.',
+                    ], 213);
+                }
+
+                // Handle image upload
+                $image = $request->file('image');
+                $imageName = time() . '.' . $image->getClientOriginalExtension();
+                // Enregistrer directement dans le dossier public/storage/products
+                $imagePath = $image->storeAs('specialistes', $imageName, options: 'public');
+                $relativePath = 'storage/' . $imagePath;
+
+                // Vérifiez si le fichier a été enregistré
+                if (!file_exists(public_path($relativePath))) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Erreur : l\'image n\'a pas été enregistrée dans ' . $relativePath,
+                    ], 500);
+                }
+
+                $specialiste->profile = $relativePath;
+                $specialiste->save();
+
+            } catch (\Exception $e) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Erreur lors de la création du produit: ' . $e->getMessage(),
+                ], 500);
             }
 
             Log::info('Enregistrement du spécialiste terminé avec succès', [

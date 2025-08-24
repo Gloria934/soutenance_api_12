@@ -31,6 +31,9 @@ class RolesSeeder extends Seeder
         Permission::firstOrCreate(['name' => 'voir_liste_rendez_vous']);
         Permission::firstOrCreate(['name' => 'definir_date_rendez_vous']);
         Permission::firstOrCreate(['name' => 'creer_ordonnance']);
+        Permission::firstOrCreate(['name' => 'consulter_calendrier']);
+
+
 
         // Personnel accueil
         Permission::firstOrCreate(['name' => 'ajouter_utilisateur']);
@@ -43,9 +46,16 @@ class RolesSeeder extends Seeder
         Permission::firstOrCreate(['name' => 'scanner_ordonnance']);
 
         // Admin pharmacie
+        Permission::firstOrCreate(['name' => 'voir_liste_medicament']);
         Permission::firstOrCreate(['name' => 'ajouter_medicament']);
         Permission::firstOrCreate(['name' => 'editer_medicament']);
         Permission::firstOrCreate(['name' => 'gerer_details_medicament']);
+
+        // Analyse
+        Permission::firstOrCreate(['name' => 'voir_liste_analyse']);
+        Permission::firstOrCreate(['name' => 'definir_date_analyse']);
+
+
 
         // Assigner des permissions à des rôles
         $adminRole = Role::findByName('admin');
@@ -59,13 +69,17 @@ class RolesSeeder extends Seeder
         $serviceMedicalRole->givePermissionTo([
             'voir_liste_rendez_vous',
             'definir_date_rendez_vous',
-            'creer_ordonnance'
+            'creer_ordonnance',
+            'consulter_calendrier',
+            'voir_liste_medicament',
         ]);
         $specialisteRole = Role::findByName('spécialiste');
         $specialisteRole->givePermissionTo([
             'voir_liste_rendez_vous',
             'definir_date_rendez_vous',
-            'creer_ordonnance'
+            'creer_ordonnance',
+            'consulter_calendrier',
+            'voir_liste_medicament',
         ]);
 
         $personnelAccueilRole = Role::findByName('personnel_accueil');
@@ -80,14 +94,17 @@ class RolesSeeder extends Seeder
         $pharmacieRole = Role::findByName('pharmacie');
         $pharmacieRole->givePermissionTo([
             'scanner_ordonnance',
-            'creer_ordonnance'
+            'creer_ordonnance',
+            'voir_liste_medicament',
         ]);
 
         $adminPharmacieRole = Role::findByName('admin_pharmacie');
         $adminPharmacieRole->givePermissionTo([
             'ajouter_medicament',
             'editer_medicament',
-            'gerer_details_medicament'
+            'gerer_details_medicament',
+            'voir_liste_analyse',
+            'definir_date_analyse',
         ]);
 
         // Rôles sans permissions pour l'instant

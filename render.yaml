@@ -1,0 +1,138 @@
+# Blueprint for deploying the Laravel API on Render
+
+services:
+  # Web Service for the Laravel application
+  - type: web
+    name: my-api-project
+    env: php
+    plan: free # Change to a paid plan for production use
+    buildCommand: |
+      composer install --no-dev --no-progress --optimize-autoloader
+      php artisan config:cache
+      php artisan route:cache
+      php artisan view:cache
+      php artisan migrate --force
+    startCommand: php artisan serve --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: APP_URL
+        fromService:
+          type: web
+          name: my-api-project
+          property: url
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: DB_CONNECTION
+        value: pgsql # Using PostgreSQL
+      - key: DB_HOST
+        fromService:
+          type: psql
+          name: my-api-database
+          property: host
+      - key: DB_PORT
+        fromService:
+          type: psql
+          name: my-api-database
+          property: port
+      - key: DB_DATABASE
+        fromService:
+          type: psql
+          name: my-api-database
+          property: database
+      - key: DB_USERNAME
+        fromService:
+          type: psql
+          name: my-api-database
+          property: user
+      - key: DB_PASSWORD
+        fromService:
+          type: psql
+          name: my-api-database
+          property: password
+      - key: REDIS_HOST
+        fromService:
+          type: redis
+          name: my-api-cache
+          property: host
+      - key: REDIS_PORT
+        fromService:
+          type: redis
+          name: my-api-cache
+          property: port
+      - key: REDIS_PASSWORD
+        fromService:
+          type: redis
+          name: my-api-cache
+          property: password
+
+  # PostgreSQL Database
+  - type: psql
+    name: my-api-database
+    plan: free # Change to a paid plan for production use
+
+  # Redis instance for Caching and Queues
+  - type: redis
+    name: my-api-cache
+    plan: free # Change to a paid plan for production use
+
+  # Background Worker
+  - type: worker
+    name: my-api-worker
+    env: php
+    plan: free # Change to a paid plan for production use
+    buildCommand: |
+      composer install --no-dev --no-progress --optimize-autoloader
+      php artisan config:cache
+    startCommand: php artisan queue:work --sleep=3 --tries=3
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        fromService:
+          type: psql
+          name: my-api-database
+          property: host
+      - key: DB_PORT
+        fromService:
+          type: psql
+          name: my-api-database
+          property: port
+      - key: DB_DATABASE
+        fromService:
+          type: psql
+          name: my-api-database
+          property: database
+      - key: DB_USERNAME
+        fromService:
+          type: psql
+          name: my-api-database
+          property: user
+      - key: DB_PASSWORD
+        fromService:
+          type: psql
+          name: my-api-database
+          property: password
+      - key: REDIS_HOST
+        fromService:
+          type: redis
+          name: my-api-cache
+          property: host
+      - key: REDIS_PORT
+        fromService:
+          type: redis
+          name: my-api-cache
+          property: port
+      - key: REDIS_PASSWORD
+        fromService:
+          type: redis
+          name: my-api-cache
+          property: password

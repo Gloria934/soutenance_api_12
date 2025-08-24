@@ -118,7 +118,7 @@ class UserController extends Controller
                 'message' => 'Utilisateur créé avec succès',
                 'user' => $user,
                 'token' => $token,
-                'role' => $user->getRoleNames()->first(),
+                'roles' => $user->getRoleNames(),
             ], 201);
         } catch (ValidationException $e) {
             // Erreurs de validation
@@ -148,6 +148,16 @@ class UserController extends Controller
     {
         //
     }
+
+
+    // public function suppression(Request $request){
+    //     $user = Auth::guard('api')->user();
+    //     if($user){
+    //         if(Hash::make($request->passsword )==$user->password){
+    //             $request->password == 
+    //         }
+    //     }
+    // }
 
     /**
      * Update the specified resource in storage.

@@ -127,7 +127,7 @@ class RegisteredUserController extends Controller
                 'message' => 'Utilisateur créé avec succès',
                 'user' => $user,
                 'token' => $token,
-                'role' => $user->getRoleNames()->first(),
+                'roles' => $user->getRoleNames(),
             ], 201);
         } catch (ValidationException $e) {
             // Erreurs de validation
@@ -259,13 +259,13 @@ class RegisteredUserController extends Controller
             \Log::info('Réponse réussie envoyée', [
                 'message' => 'Utilisateur créé avec succès',
                 'user_id' => $user->id,
-                'role' => $user->getRoleNames()->first(),
+                'roles' => $user->getRoleNames(),
             ]);
             return response()->json([
                 'message' => 'Utilisateur créé avec succès',
                 'user' => $user,
                 'token' => $token,
-                'role' => $user->getRoleNames()->first(),
+                'roles' => $user->getRoleNames(),
             ], 201);
         } catch (ValidationException $e) {
             // Erreurs de validation
@@ -332,7 +332,7 @@ class RegisteredUserController extends Controller
     {
         $user = User::findOrFail($id);
         return response()->json([
-            'role' => $user->getRoleNames()->first(),
+            'roles' => $user->getRoleNames(),
         ], 200);
     }
 

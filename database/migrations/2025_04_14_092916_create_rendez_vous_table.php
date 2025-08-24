@@ -24,7 +24,7 @@ return new class extends Migration {
             $table->string('statut')
                 ->default(StatutEnum::ENATTENTE->value)
                 ->comment('Statut du rendez-vous: ' . implode(', ', StatutEnum::values()));
-            $table->string('type')->nullable();
+            $table->string('type')->nullable()->default('consultation');
             $table->softDeletes();
             $table->timestamps();
             $table->foreignId('patient_id')->constrained('users')->onDelete('cascade')->onUpdate('cascade');
