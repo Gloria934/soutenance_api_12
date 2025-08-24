@@ -29,27 +29,27 @@ services:
         value: pgsql # Using PostgreSQL
       - key: DB_HOST
         fromService:
-          type: psql
+          type: postgres
           name: my-api-database
           property: host
       - key: DB_PORT
         fromService:
-          type: psql
+          type: postgres
           name: my-api-database
           property: port
       - key: DB_DATABASE
         fromService:
-          type: psql
+          type: postgres
           name: my-api-database
           property: database
       - key: DB_USERNAME
         fromService:
-          type: psql
+          type: postgres
           name: my-api-database
           property: user
       - key: DB_PASSWORD
         fromService:
-          type: psql
+          type: postgres
           name: my-api-database
           property: password
       - key: REDIS_HOST
@@ -69,7 +69,7 @@ services:
           property: password
 
   # PostgreSQL Database
-  - type: psql
+  - type: postgres
     name: my-api-database
     plan: free # Change to a paid plan for production use
 
@@ -98,27 +98,27 @@ services:
         value: pgsql
       - key: DB_HOST
         fromService:
-          type: psql
+          type: postgres
           name: my-api-database
           property: host
       - key: DB_PORT
         fromService:
-          type: psql
+          type: postgres
           name: my-api-database
           property: port
       - key: DB_DATABASE
         fromService:
-          type: psql
+          type: postgres
           name: my-api-database
           property: database
       - key: DB_USERNAME
         fromService:
-          type: psql
+          type: postgres
           name: my-api-database
           property: user
       - key: DB_PASSWORD
         fromService:
-          type: psql
+          type: postgres
           name: my-api-database
           property: password
       - key: REDIS_HOST
