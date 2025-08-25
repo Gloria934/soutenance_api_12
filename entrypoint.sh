@@ -1,9 +1,8 @@
 #!/bin/sh
 
 # Substitute environment variables in the nginx config.
-# This will replace ${PORT} with the value of the PORT environment variable.
-export DOLLAR='$'
-envsubst < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
+# This will only substitute ${PORT} and leave other '$' variables untouched.
+envsubst '$PORT' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
 
 # Run migrations
 echo "Running migrations..."
