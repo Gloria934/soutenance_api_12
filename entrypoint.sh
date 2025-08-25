@@ -4,6 +4,7 @@
 # qui teste la connexion, mais pour l'instant, une simple pause peut aider.
 # sleep 10
 
+
 echo "Lancement des migrations..."
 php artisan migrate --force
 

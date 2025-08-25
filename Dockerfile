@@ -26,10 +26,6 @@ RUN composer install --no-interaction --no-dev --prefer-dist --no-scripts
 # Copier le reste du code de l'application
 COPY . .
 
-# Créer le .env et générer la clé. Ça fonctionne car /vendor existe.
-RUN cp .env.example .env
-RUN php artisan key:generate
-
 # Exécuter les scripts Composer qui ont été sautés
 RUN composer run-script post-autoload-dump --no-interaction --no-dev
 
