@@ -1,16 +1,17 @@
 #!/bin/sh
 
-# Attendre que la base de données soit prête - une meilleure pratique serait une boucle
-# qui teste la connexion, mais pour l'instant, une simple pause peut aider.
-# sleep 10
-
-
-echo "Lancement des migrations..."
+# Run migrations
+echo "Running migrations..."
 php artisan migrate --force
 
-echo "Lancement des seeders..."
-php artisan db:seed --force
+# Optional: Cache configuration for production
+echo "Caching configuration..."
+php artisan config:cache
+php artisan route:cache
 
-echo "Démarrage du serveur..."
-# Exécute la commande passée en argument au script (la CMD du Dockerfile)
-exec "$@"
+# Start PHP-FPM in the background
+php-fpm -D
+
+# Start Nginx in the foreground (this will keep the container running)
+echo "Starting Nginx..."
+nginx -g "daemon off;"

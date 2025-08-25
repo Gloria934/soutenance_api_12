@@ -33,6 +33,9 @@ RUN composer run-script post-autoload-dump --no-interaction --no-dev
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
+# Copier la configuration Nginx
+COPY nginx.conf /etc/nginx/nginx.conf
+
 # Copier et donner les permissions au script d'entrée
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
@@ -42,6 +45,3 @@ EXPOSE 80
 
 # Définir le point d'entrée
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-
-# Lancer le serveur par défaut
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=80"]
