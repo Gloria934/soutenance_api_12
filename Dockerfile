@@ -30,6 +30,9 @@ COPY . .
 RUN cp .env.example .env
 RUN php artisan key:generate
 
+# Exécuter les migrations et les seeders
+RUN php artisan migrate --force && php artisan db:seed --force
+
 # Exécuter les scripts Composer qui ont été sautés
 RUN composer run-script post-autoload-dump --no-interaction --no-dev
 
