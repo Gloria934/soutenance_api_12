@@ -4,6 +4,7 @@ FROM php:8.2-fpm-alpine
 # Installer les dépendances système et les extensions PHP
 RUN apk add --no-cache \
       nginx \
+      gettext \
       libzip-dev \
       libpng-dev \
       jpeg-dev \
@@ -34,7 +35,7 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Copier la configuration Nginx
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY nginx.conf /etc/nginx/nginx.conf.template
 
 # Copier et donner les permissions au script d'entrée
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
