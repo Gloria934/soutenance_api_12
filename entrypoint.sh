@@ -4,6 +4,11 @@
 # This will only substitute ${PORT} and leave other '$' variables untouched.
 envsubst '$PORT' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
 
+# Set permissions for storage and cache
+echo "Setting permissions..."
+chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
 # Run migrations
 echo "Running migrations..."
 php artisan migrate --force

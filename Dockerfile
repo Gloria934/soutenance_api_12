@@ -12,7 +12,7 @@ RUN apk add --no-cache \
       libjpeg-turbo-dev \
       gd \
       && docker-php-ext-configure gd --with-freetype --with-jpeg \
-      && docker-php-ext-install pdo pdo_mysql zip bcmath gd
+      && docker-php-ext-install pdo pdo_mysql pdo_pgsql zip bcmath gd
 
 # Installer Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
