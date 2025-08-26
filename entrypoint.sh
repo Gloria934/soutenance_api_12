@@ -11,7 +11,10 @@ chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Run migrations and seed the database
 echo "Running migrations and seeding..."
-php artisan migrate --force --seed
+php artisan migrate --force
+echo "Running seeders"
+php artisan db:seed
+
 
 # Optional: Cache configuration for production
 echo "Caching configuration..."
