@@ -14,6 +14,9 @@ echo "Running migrations and seeding..."
 php artisan migrate --force
 echo "Running seeders"
 php artisan db:seed
+echo "seeders terminated"
+
+
 
 
 # Optional: Cache configuration for production
