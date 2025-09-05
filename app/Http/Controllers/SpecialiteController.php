@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+// namespace App\Http\Controllers;
 use App\Models\LangueSpecialite;
 use App\Models\Specialite;
 use App\Models\User;
@@ -61,7 +61,7 @@ class SpecialiteController extends Controller
 
     public function getSpecialistInfo(string $specialist_id)
     {
-        $specialite = Specialite::where('specialiste_id', $specialist_id)->first();
+        $specialite = Specialite::where('specialiste_id', $specialist_id)->with('langues')->first();
         if ($specialite) {
             return response()->json([
                 'message' => "Succès",
@@ -150,22 +150,165 @@ class SpecialiteController extends Controller
                     ], 213);
                 }
 
+
                 // Handle image upload
                 $image = $request->file('image');
                 $imageName = time() . '.' . $image->getClientOriginalExtension();
-                // Enregistrer directement dans le dossier public/storage/products
-                $imagePath = $image->storeAs('specialistes', $imageName, options: 'public');
-                $relativePath = 'storage/' . $imagePath;
+                $publicPath = public_path('specialistes');
 
-                // Vérifiez si le fichier a été enregistré
-                if (!file_exists(public_path($relativePath))) {
+                // // Create directory if it doesn't exist
+                // if (!file_exists($publicPath)) {
+                //     mkdir($publicPath, 0777, true);
+                // }
+
+                // Move the file to the public directory
+                $image->move($publicPath, $imageName);
+                $imagePath = 'specialistes/' . $imageName;
+
+
+
+                $specialiste->profile = $imagePath;
+                $specialiste->save();
+
+            } catch (\Exception $e) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Erreur lors de la création de l\'image de la specialite : ' . $e->getMessage(),
+                ], 500);
+            }
+
+            Log::info('Enregistrement du spécialiste terminé avec succès', [
+                'specialite_id' => $specialite->id,
+                'langue_ids' => $langue_ids,
+            ]);
+
+            // Retourner une réponse de succès
+            return response()->json([
+                'message' => 'Spécialité enregistrée avec succès',
+                'specialite' => $specialite,
+                'langue_ids' => $langue_ids,
+            ], 200);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Erreur de validation', [
+                'errors' => $e->errors(),
+                'request_data' => $request->all(),
+            ]);
+
+            return response()->json([
+                'message' => 'Données invalides',
+                'errors' => $e->errors(),
+            ], 400);
+
+        } catch (\Exception $e) {
+            Log::error('Erreur lors de l\'enregistrement du spécialiste', [
+                'error' => $e->getMessage(),
+                'stack_trace' => $e->getTraceAsString(),
+                'request_data' => $request->all(),
+            ]);
+
+            return response()->json([
+                'message' => 'Une erreur est survenue lors de l\'enregistrement',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function updateSpecialisteSpecialite(Request $request)
+    {
+        // Journaliser les données d'entrée
+        Log::info('Début de la fonction enregistrerSpecialiste', [
+            'request_data' => $request->all(),
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+
+        try {
+            // Valider les données d'entrée
+            $validated = $request->validate([
+                'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'tarif' => 'required|numeric',
+                'description' => 'required|string',
+                'langue_ids' => 'required|array',
+                'langue_ids.*' => 'integer|exists:langues,id',
+            ]);
+
+            Log::info('Données validées avec succès', [
+                'validated_data' => $validated,
+            ]);
+
+            // Vérifier l'utilisateur authentifié
+            $specialiste = Auth::guard('api')->user();
+            if (!$specialiste) {
+                Log::warning('Aucun utilisateur authentifié trouvé');
+                return response()->json([
+                    'message' => 'Utilisateur non authentifié',
+                ], 401);
+            }
+
+            Log::info('Utilisateur authentifié', [
+                'specialiste_id' => $specialiste->id,
+                'specialiste_email' => $specialiste->email,
+            ]);
+
+            $specialite = Specialite::where('specialiste_id', $specialiste->id)->first();
+
+            $specialite->description = $request->description;
+            $specialite->tarif = $request->tarif;
+
+
+
+            Log::info('Spécialité créée avec succès', [
+                'specialite_id' => $specialite->id,
+                'specialite_data' => $specialite->toArray(),
+            ]);
+
+            $langues_specialites = LangueSpecialite::where('specialite_id', $specialiste->id)->deleteQuietly();
+
+            // Associer les langues
+            $langue_ids = $request->langue_ids;
+            foreach ($langue_ids as $langue_id) {
+                Log::debug('Traitement de langue_id', [
+                    'langue_id' => $langue_id,
+                    'specialite_id' => $specialite->id,
+                ]);
+
+                LangueSpecialite::create([
+                    'specialite_id' => $specialite->id,
+                    'langue_id' => $langue_id,
+                ]);
+
+                Log::debug('Langue associée avec succès', [
+                    'langue_id' => $langue_id,
+                    'specialite_id' => $specialite->id,
+                ]);
+            }
+
+            try {
+                // Vérifiez si le fichier est reçu
+                if (!$request->hasFile('image') || !$request->file('image')->isValid()) {
                     return response()->json([
                         'success' => false,
-                        'message' => 'Erreur : l\'image n\'a pas été enregistrée dans ' . $relativePath,
-                    ], 500);
+                        'message' => 'Aucun fichier image valide reçu.',
+                    ], 213);
                 }
 
-                $specialiste->profile = $relativePath;
+                // Handle image upload
+                // Handle image upload
+                $image = $request->file('image');
+                $imageName = time() . '.' . $image->getClientOriginalExtension();
+                $publicPath = public_path('specialistes');
+
+                // // Create directory if it doesn't exist
+                // if (!file_exists($publicPath)) {
+                //     mkdir($publicPath, 0777, true);
+                // }
+
+                // Move the file to the public directory
+                $image->move($publicPath, $imageName);
+                $imagePath = 'specialistes/' . $imageName;
+
+                $specialiste->profile = $imagePath;
                 $specialiste->save();
 
             } catch (\Exception $e) {
@@ -245,24 +388,26 @@ class SpecialiteController extends Controller
 
     public function findUserSpecialite()
     {
-        try {
-            Log::info('Début de la fonction findUserSpecialite');
+        // file_put_contents(storage_path('logs/debug.log'), 'findUserSpecialite called at ' . date('Y-m-d H:i:s') . "\n", FILE_APPEND);
 
-            // Vérifier si l'utilisateur est authentifié
-            $user = Auth::guard('api')->user();
-            if (!$user) {
-                Log::warning('Aucun utilisateur authentifié trouvé');
-                return response()->json([
-                    'message' => 'Utilisateur non authentifié',
-                ], 401);
-            }
-            Log::info('Utilisateur authentifié', ['user_id' => $user->id]);
+
+        Log::info('Début de la fonction findUserSpecialite -----------------');
+
+        // Vérifier si l'utilisateur est authentifié
+        $spe_cialiste = Auth::guard('api')->user();
+        if (!$spe_cialiste) {
+            Log::warning('Aucun utilisateur authentifié trouvé');
+            return response()->json([
+                'message' => 'Utilisateur non authentifié',
+            ], 401);
+        } else {
+            // Log::info('Utilisateur authentifié', ['user_id' => $user->id]);
 
             // Rechercher la spécialité
-            $specialite = Specialite::where('specialiste_id', $user->id)->first();
+            $specialite = Specialite::where('specialiste_id', $spe_cialiste->id)->first();
             if ($specialite) {
                 Log::info('Spécialité trouvée pour l\'utilisateur', [
-                    'user_id' => $user->id,
+                    'user_id' => $spe_cialiste->id,
                     'specialite_id' => $specialite->id
                 ]);
                 return response()->json([
@@ -270,20 +415,12 @@ class SpecialiteController extends Controller
                     'specialite' => $specialite,
                 ], 200);
             } else {
-                Log::warning('Aucune spécialité trouvée pour l\'utilisateur', ['user_id' => $user->id]);
+                Log::warning('Aucune spécialité trouvée pour l\'utilisateur', ['user_id' => $spe_cialiste->id]);
                 return response()->json([
                     'message' => 'Aucune spécialité trouvée',
                 ], 210);
             }
-        } catch (\Exception $e) {
-            Log::error('Erreur dans findUserSpecialite', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            return response()->json([
-                'message' => 'Erreur serveur',
-                'error' => $e->getMessage()
-            ], 500);
+
         }
     }
 

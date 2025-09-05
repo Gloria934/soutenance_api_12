@@ -29,5 +29,10 @@ class Service extends Model
         return $this->hasMany(RendezVous::class);
     }
 
+    public function specialiste()
+    {
+        return $this->hasMany(User::class);
+    }
+
 
 }

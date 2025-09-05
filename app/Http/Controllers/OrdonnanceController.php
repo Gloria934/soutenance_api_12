@@ -43,7 +43,7 @@ class OrdonnanceController extends Controller
     public function store(Request $request)
     {
         // Log de la requête entrante pour vérifier les données envoyées
-        \Illuminate\Support\Facades\Log::info('Début de la méthode store', [
+        Log::info('Début de la méthode store', [
             'request_data' => $request->all(),
             'headers' => $request->headers->all(),
             'ip' => $request->ip(),
@@ -52,8 +52,8 @@ class OrdonnanceController extends Controller
 
         try {
             // Validation des données
-            \Illuminate\Support\Facades\Log::info('Début de la validation des données');
-            \Illuminate\Support\Facades\Log::info('Liste des meds', ['validated_data' => $request->medicaments_prescrits]);
+            Log::info('Début de la validation des données');
+            Log::info('Liste des meds', ['validated_data' => $request->medicaments_prescrits]);
 
             $validator = $request->validate([
                 'montant_total' => ['required', 'numeric'],

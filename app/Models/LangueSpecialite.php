@@ -13,9 +13,11 @@ class LangueSpecialite extends Model
         'specialite_id',
     ];
 
+
+
     public function langues()
     {
-        return $this->belongsTo(Langue::class);
+        return $this->hasMany(Langue::class);
     }
 
     public function specialites()

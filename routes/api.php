@@ -11,6 +11,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\ConsultationController;
 use App\Http\Controllers\DeviceTokenController;
+use App\Http\Controllers\FournitureController;
 use App\Http\Controllers\LangueController;
 use App\Http\Controllers\OrdonnanceController;
 use App\Http\Controllers\PatientController;
@@ -24,7 +25,7 @@ use App\Http\Controllers\RendezVousController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SimpleNotificationController;
-use App\Http\Controllers\SpecialisteController;
+// use App\Http\Controllers\SpecialisteController;
 use App\Http\Controllers\SpecialiteController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -43,6 +44,7 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 Route::apiResource('categories', CategoryController::class);
 Route::apiResource('sous_categories', SousCategoryController::class);
 Route::apiResource('dcis', DciController::class);
+Route::apiResource('fournitures', FournitureController::class);
 Route::apiResource('classes', ClasseController::class);
 Route::apiResource('formes', FormeController::class);
 Route::apiResource('allergies', AllergyController::class);
@@ -84,7 +86,6 @@ Route::post('/users/{userId}/permissions', [RoleController::class, 'assignPermis
 Route::get('/permissions', [RoleController::class, 'getPermissions']);
 
 
-
 Route::apiResource('personnels', PersonnelController::class);
 Route::post('/personnels/{id}/role', [PersonnelController::class, 'updateRole']);
 
@@ -108,9 +109,11 @@ Route::post('rendez-vous-analyse', [AnalyseController::class, 'storeAnalyseRdv']
 
 Route::apiResource('specialite', SpecialiteController::class);
 Route::get('user-specialite', [SpecialiteController::class, 'getUserSpecialites']);
-Route::get('find-user-specialite', [SpecialiteController::class, 'findUserSpecialite']);
+Route::get('find-user-specialite', [SpecialiteController::class, 'findUserSpecialite']);//->middleware('auth:sanctum');
 Route::apiResource('langues', LangueController::class);
 Route::post('specialiste-langue', [SpecialiteController::class, 'enregistrerSpecialiste']);
+Route::post('update-specialiste-specialite', [SpecialiteController::class, 'updateSpecialisteSpecialite']);
+
 Route::get('specialiste/{specialiste}/info', [SpecialiteController::class, 'getSpecialistInfo']);
 Route::get('rendez-vous-utilisateur', [RendezVousController::class, 'getUserRdv']);
 // Route suivante pour faire un enregistrement rapide d'un utilisateur par un personnel à l'accueil.
@@ -135,6 +138,9 @@ Route::post('/update_ordonnance', [OrdonnanceController::class, 'updateOrdonnanc
 
 Route::post('/update_consultation', [ConsultationController::class, 'updateConsultation']);
 Route::post('/update_analyse', [AnalyseController::class, 'updateAnalyse']);
+Route::post('/achat_fourniture', [FournitureController::class, 'achatFourniture']);
+Route::get('/get-user-fournitures', [FournitureController::class, 'getUserFourniture']);
+
 Route::apiResource('/planning', PlanningController::class);
 Route::get('/user_planning', [PlanningController::class, 'authenticatedUserPlannings']);
 Route::get('/service_planning', [PlanningController::class, 'authenticatedServicePlannings']);

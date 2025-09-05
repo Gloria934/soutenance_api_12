@@ -126,30 +126,29 @@ class PharmaceuticalProductController extends Controller
 
         try {
             // Vérifiez si le fichier est reçu
-            if (!$request->hasFile('image') || !$request->file('image')->isValid()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Aucun fichier image valide reçu.',
-                ], 422);
-            }
+        if (!$request->hasFile('image') || !$request->file('image')->isValid()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Aucun fichier image valide reçu.',
+            ], 422);
+        }
 
-            // Handle image upload
-            $image = $request->file('image');
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
-            // Enregistrer directement dans le dossier public/storage/products
-            $imagePath = $image->storeAs('products', $imageName, 'public');
-            $relativePath = 'storage/' . $imagePath;
+        // Handle image upload
+        $image = $request->file('image');
+        $imageName = time() . '.' . $image->getClientOriginalExtension();
+        $publicPath = public_path('products');
+        
+        // Create directory if it doesn't exist
+        if (!file_exists($publicPath)) {
+            mkdir($publicPath, 0777, true);
+        }
 
-            // Vérifiez si le fichier a été enregistré
-            if (!file_exists(public_path($relativePath))) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Erreur : l\'image n\'a pas été enregistrée dans ' . $relativePath,
-                ], 500);
-            }
+        // Move the file to the public directory
+        $image->move($publicPath, $imageName);
+        $imagePath = 'products/' . $imageName;
 
             $product = PharmaceuticalProduct::create([
-                'image_path' => $relativePath,
+                'image_path' => $imagePath,
                 'nom_produit' => $request->nom_produit,
                 'dosage' => $request->dosage,
                 'prix' => $request->prix,

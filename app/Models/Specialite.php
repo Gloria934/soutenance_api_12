@@ -37,7 +37,13 @@ class Specialite extends Model
 
     public function specialiste()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'specialiste_id');
     }
+    public function langues()
+    {
+        return $this->belongsToMany(Langue::class, 'langues_specialites', 'specialite_id', 'langue_id');
+    }
+
+
 
 }

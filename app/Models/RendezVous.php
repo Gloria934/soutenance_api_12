@@ -60,12 +60,13 @@ class RendezVous extends Model
     }
     public function specialiste()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'specialiste_id');
     }
 
     public function patient()
     {
         return $this->belongsTo(User::class);
     }
+
 
 }

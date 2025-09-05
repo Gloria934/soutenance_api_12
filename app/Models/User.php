@@ -83,7 +83,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'password',
         'device_token',
         'remember_token',
-        'profile'
+        'profile',
     ];
 
 
@@ -138,7 +138,12 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function specialite()
     {
-        return $this->hasOne(Specialite::class);
+        return $this->hasOne(Specialite::class, 'specialiste_id');
+    }
+
+    public function service()
+    {
+        return $this->hasOne(Service::class, 'service_voulu');
     }
 
 

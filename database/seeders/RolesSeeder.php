@@ -50,6 +50,8 @@ class RolesSeeder extends Seeder
         Permission::firstOrCreate(['name' => 'ajouter_medicament']);
         Permission::firstOrCreate(['name' => 'editer_medicament']);
         Permission::firstOrCreate(['name' => 'gerer_details_medicament']);
+        Permission::firstOrCreate(['name' => 'gerer_fournitures']);
+
 
         // Analyse
         Permission::firstOrCreate(['name' => 'voir_liste_analyse']);
@@ -105,6 +107,9 @@ class RolesSeeder extends Seeder
             'gerer_details_medicament',
             'voir_liste_analyse',
             'definir_date_analyse',
+            'voir_liste_medicament',
+            'gerer_fournitures',
+
         ]);
 
         // Rôles sans permissions pour l'instant

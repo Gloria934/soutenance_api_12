@@ -195,7 +195,7 @@ class RendezVousController extends Controller
     public function getUserRdv()
     {
         $user = Auth::guard('api')->user();
-        $rdvs = RendezVous::where('patient_id', $user->id)->where('type', 'rendez-vous')->whereNotNull('service_id')->with('patient', 'service')->get();
+        $rdvs = RendezVous::where('patient_id', $user->id)->whereNot('type', 'consultation')->with('patient', 'service', 'specialiste', 'specialiste.specialite')->get();
 
         return response()->json([
             'message' => 'succès',

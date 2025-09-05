@@ -178,6 +178,13 @@ class ServiceController extends Controller
                 'rdvs' => $rdvs,
                 'message' => 'endez-vous récupérés avec succès'
             ], 200);
+        } elseif ($user->hasRole('spécialiste')) {
+            $rdvs = RendezVous::where('specialiste_id', $user->id)->whereNull('service_id')->with('patient', 'specialiste')->whereNull('date_rdv')->get();
+            return response()->json([
+                'success' => true,
+                'rdvs' => $rdvs,
+                'message' => 'endez-vous récupérés avec succès'
+            ], 200);
         }
     }
 

@@ -54,7 +54,7 @@ class PatientController extends Controller
         } else {
             return response()->json([
                 'message' => 'Utilisateur non trouvé',
-            ], 401);
+            ], 210);
         }
     }
 

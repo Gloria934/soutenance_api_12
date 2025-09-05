@@ -33,9 +33,11 @@ class Langue extends Model
         'nom',
     ];
 
-    public function langues()
+
+
+    public function specialites()
     {
-        return $this->belongsTo(Specialite::class);
+        return $this->belongsToMany(Specialite::class, 'langues_specialites', 'langue_id', 'specialite_id');
     }
 
 }
