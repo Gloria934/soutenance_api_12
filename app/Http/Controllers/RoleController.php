@@ -59,6 +59,7 @@ class RoleController extends Controller
         ]);
 
         $user = User::findOrFail($userId);
+        $user->permissions()->detach();
         $user->syncRoles([$request->role]);
 
         // Mettre à jour le service_id si fourni

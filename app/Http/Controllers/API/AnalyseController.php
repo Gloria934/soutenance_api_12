@@ -136,8 +136,7 @@ class AnalyseController extends Controller
             return DB::transaction(function () use ($validated) {
                 // Update Ordonnance
                 AnalysePatient::findOrFail($validated['analyse_patient_id'])->update(['statut' => StatutEnum::CONFIRME->value]);
-                // $consultation->statut = 
-                // $ordonnance->save();
+
 
                 Log::info('Analyse updated successfully');
 

@@ -146,5 +146,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasOne(Service::class, 'service_voulu');
     }
 
+    public function ordonnances()
+    {
+        return $this->hasMany(Ordonnance::class);
+    }
+
+
 
 }

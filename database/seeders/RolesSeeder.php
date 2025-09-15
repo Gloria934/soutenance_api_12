@@ -32,6 +32,8 @@ class RolesSeeder extends Seeder
         Permission::firstOrCreate(['name' => 'definir_date_rendez_vous']);
         Permission::firstOrCreate(['name' => 'creer_ordonnance']);
         Permission::firstOrCreate(['name' => 'consulter_calendrier']);
+        Permission::firstOrCreate(['name' => 'scanner_code_fourniture']);
+        Permission::firstOrCreate(['name' => 'scanner_code_rendez_vous']);
 
 
 
@@ -56,6 +58,8 @@ class RolesSeeder extends Seeder
         // Analyse
         Permission::firstOrCreate(['name' => 'voir_liste_analyse']);
         Permission::firstOrCreate(['name' => 'definir_date_analyse']);
+        Permission::firstOrCreate(['name' => 'scanner_code_analyse']);
+
 
 
 

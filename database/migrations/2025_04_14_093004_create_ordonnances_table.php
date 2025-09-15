@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Spatie\Permission\Commands\UpgradeForTeams;
 
 return new class extends Migration {
     /**
@@ -14,8 +15,10 @@ return new class extends Migration {
             $table->id();
             $table->float('montant_total');
             $table->float('montant_paye');
+            $table->string('code_ordonnance')->nullable();
             $table->foreignId('patient_id')->constrained('users');
-
+            $table->foreignId('service_id')->nullable()->constrained('services');
+            $table->foreignId('specialiste_id')->nullable()->constrained('users');
             $table->softDeletes();
             $table->timestamps();
 

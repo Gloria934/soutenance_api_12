@@ -42,6 +42,9 @@ class OrdonnanceController extends Controller
      */
     public function store(Request $request)
     {
+        // Récupération de l'utilisateur 
+        $user = Auth::guard('api')->user();
+
         // Log de la requête entrante pour vérifier les données envoyées
         Log::info('Début de la méthode store', [
             'request_data' => $request->all(),
@@ -72,6 +75,13 @@ class OrdonnanceController extends Controller
                 'patient_id' => $validator['patient_id'],
 
             ]);
+            if ($user->hasRole('service_medical')) {
+                $ordonnance->service_id = $user->service_voulu;
+                $ordonnance->save();
+            } elseif ($user->hasRole('pharmacie')) {
+                $ordonnance->specialiste_id = $user->id;
+                $ordonnance->save();
+            }
             \Illuminate\Support\Facades\Log::info('Ordonnance créée', ['ordonnance_id' => $ordonnance->id]);
 
             // Création des médicaments prescrits
@@ -145,7 +155,7 @@ class OrdonnanceController extends Controller
     public function getUserOrdonnances()
     {
         $user = Auth::guard('api')->user();
-        $ordonnances = Ordonnance::where('patient_id', $user->id)->with('medicaments_prescrits', 'medicaments_prescrits.pharmaceutical_product')->get();
+        $ordonnances = Ordonnance::where('patient_id', $user->id)->with(/*'medicaments_prescrits',*/ 'medicaments_prescrits.pharmaceutical_product')->get();
 
         return response()->json([
             'message' => 'succès',

@@ -128,6 +128,13 @@ class FournitureController extends Controller
                     'livre' => false,
                 ]);
 
+                // Décrémentation de la quantité disponible de la  fourniture
+                $fourniture = Fourniture::findOrFail($validated['fourniture_id']);
+                if ($fourniture) {
+                    $fourniture->quantite -= $validated['quantite'];
+                }
+                $fourniture->save();
+
 
                 Log::info('Enregistrement terminé');
 

@@ -34,5 +34,10 @@ class Service extends Model
         return $this->hasMany(User::class);
     }
 
+    public function ordonnances()
+    {
+        return $this->hasMany(Ordonnance::class);
+    }
+
 
 }

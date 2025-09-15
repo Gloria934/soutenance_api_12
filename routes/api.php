@@ -56,22 +56,16 @@ Route::get('get-analyses-appointments', [AnalyseController::class, 'getAnalyseAp
 
 Route::post('editer-rendez-vous', [ServiceController::class, 'editerRendezVous']);//
 Route::post('editer-analyse', [AnalyseController::class, 'editerAnalyse']);//
-
 //
-
 Route::post('verify_user_number', [AuthenticatedSessionController::class, 'verifyUserNumber']);
 Route::apiResource('pharmaceutical_products', PharmaceuticalProductController::class);
 Route::put('pharmaceutical_products/{id}', [PharmaceuticalProductController::class, 'update']);
 // Route::delete('pharmaceutical_products/{id}', [PharmaceuticalProductController::class, 'delete']);
 Route::apiResource('ordonnance', OrdonnanceController::class);
-Route::put('ordonnance/{ordonnance}', [PharmacyController::class, 'getOrdonnances']);
+Route::get('ordonnances/patient/{ordonnance}', [PharmacyController::class, 'getOrdonnances']);
 Route::post('find-user-with-code-patient', [PatientController::class, 'findUserWithCodePatient']);
 Route::post('edit-patient', [RegisteredUserController::class, 'editPatientInfo']);
-
-
 Route::get('/pharmaceutical-products', [PharmaceuticalProductController::class, 'index']);
-
-
 // en cours : Pour les notifications
 Route::post('/save-device-token', [NotificationController::class, 'saveDeviceToken'])->middleware('auth:sanctum');
 

@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 
 
+
 class PharmacyController extends Controller
 {
     public function getPatient(string $code_ordonnance)
@@ -22,8 +23,9 @@ class PharmacyController extends Controller
     }
     public function getOrdonnances($id)
     {
+
         $user = User::findOrFail($id);
-        $ordonnances = Ordonnance::where('patient_id', $user->id)->with('medicaments_prescrits', 'medicaments_prescrits.pharmaceutical_product')->get();
+        $ordonnances = Ordonnance::where('patient_id', $user->id)->with('medicaments_prescrits', 'service', 'specialiste', 'medicaments_prescrits.pharmaceutical_product')->get();
 
         return response()->json([
             'message' => 'succès',

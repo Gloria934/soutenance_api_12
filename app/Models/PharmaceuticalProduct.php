@@ -35,7 +35,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Dci $dci
 
  *
- * @package App\Models
+ * @package App\Models  
  */
 class PharmaceuticalProduct extends Model
 {
