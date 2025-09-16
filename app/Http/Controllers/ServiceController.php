@@ -25,6 +25,17 @@ class ServiceController extends Controller
         ], 200);
     }
 
+    public function availableServices(): JsonResponse
+    {
+        $services = Service::all();
+
+        return response()->json([
+            'success' => true,
+            'data' => $services,
+            'message' => 'Services retrieved successfully'
+        ], 200);
+    }
+
     /**
      * Store a newly created service in storage.
      */

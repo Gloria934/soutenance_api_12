@@ -81,6 +81,9 @@ class OrdonnanceController extends Controller
             } elseif ($user->hasRole('pharmacie')) {
                 $ordonnance->specialiste_id = $user->id;
                 $ordonnance->save();
+            } elseif ($user->hasRole('spécialiste')) {
+                $ordonnance->specialiste_id = $user->id;
+                $ordonnance->save();
             }
             \Illuminate\Support\Facades\Log::info('Ordonnance créée', ['ordonnance_id' => $ordonnance->id]);
 
@@ -155,7 +158,7 @@ class OrdonnanceController extends Controller
     public function getUserOrdonnances()
     {
         $user = Auth::guard('api')->user();
-        $ordonnances = Ordonnance::where('patient_id', $user->id)->with(/*'medicaments_prescrits',*/ 'medicaments_prescrits.pharmaceutical_product')->get();
+        $ordonnances = Ordonnance::where('patient_id', $user->id)->with(/*'medicaments_prescrits',*/ 'service', 'specialiste', 'medicaments_prescrits.pharmaceutical_product')->get();
 
         return response()->json([
             'message' => 'succès',

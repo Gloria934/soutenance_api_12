@@ -49,6 +49,7 @@ Route::apiResource('classes', ClasseController::class);
 Route::apiResource('formes', FormeController::class);
 Route::apiResource('allergies', AllergyController::class);
 Route::apiResource('services', ServiceController::class);
+Route::get('available_services', [ServiceController::class, 'availableServices']);
 Route::post('services/{id}/restore', [ServiceController::class, 'restore']);
 //
 Route::get('rendez-vous-pour-service-precis', [ServiceController::class, 'rendezVousPourServicePrecis']);//
