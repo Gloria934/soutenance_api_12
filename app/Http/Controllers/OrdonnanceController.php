@@ -42,7 +42,7 @@ class OrdonnanceController extends Controller
      */
     public function store(Request $request)
     {
-        // Récupération de l'utilisateur 
+        // Récupération de l'utilisateur (le personnel de santé qui crée l'ordonnance)
         $user = Auth::guard('api')->user();
 
         // Log de la requête entrante pour vérifier les données envoyées
@@ -85,6 +85,11 @@ class OrdonnanceController extends Controller
                 $ordonnance->specialiste_id = $user->id;
                 $ordonnance->save();
             }
+
+            // récupérer le patient
+            $patient = User::findOrFail($ordonnance->patient_id);
+
+            $this->sendOtpViaOneSignal($patient->device_token);
             \Illuminate\Support\Facades\Log::info('Ordonnance créée', ['ordonnance_id' => $ordonnance->id]);
 
             // Création des médicaments prescrits
@@ -308,5 +313,59 @@ class OrdonnanceController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    private function sendOtpViaOneSignal(string $playerId)
+    {
+        $url = "https://onesignal.com/api/v1/notifications";
+
+        $apiKey = env("ONESIGNAL_REST_API_KEY");
+        $appId = env("ONESIGNAL_APP_ID");
+
+        $headers = [
+            "Authorization: Basic " . $apiKey,
+
+            "Content-Type: application/json"
+        ];
+
+        $data = [
+            "app_id" => $appId,
+            "include_player_ids" => [$playerId],
+            "headings" => ["en" => "mediPay"],
+            "contents" => ["en" => "Une nouvelle precription. Payez et passez à la pharmacie"],
+            "priority" => 10,
+        ];
+
+        \Log::info('OneSignal Notification - Data to send', $data);
+        \Log::info('OneSignal Notification - Headers', $headers);
+
+        $ch = curl_init();
+
+        curl_setopt_array($ch, [
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => json_encode($data),
+            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_SSL_VERIFYHOST => false,
+        ]);
+
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        if (curl_errno($ch)) {
+            \Log::error('OneSignal Notification - CURL error: ' . curl_error($ch));
+        }
+
+        curl_close($ch);
+
+        \Log::info('OneSignal Notification - HTTP Code', ['httpCode' => $httpCode]);
+        \Log::info('OneSignal Notification - Response', ['response' => $response]);
+
+        return [
+            'status' => $httpCode,
+            'response' => $response
+        ];
     }
 }
