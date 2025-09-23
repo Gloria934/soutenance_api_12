@@ -1,44 +1,42 @@
-FROM richarvey/nginx-php-fpm:latest
+# --- Étape de Build ---
+# Utilisation de l'image officielle Composer
+FROM composer:2 as vendor
 
+WORKDIR /app
+
+# Copier tous les fichiers pour que 'artisan' soit disponible pour les scripts composer
 COPY . .
 
-# Image config
-ENV SKIP_COMPOSER 1
-ENV WEBROOT /var/www/html/public
-ENV PHP_ERRORS_STDERR 1
-ENV RUN_SCRIPTS 1
-ENV REAL_IP_HEADER 1
+# Installe les dépendances. Les scripts post-install devraient maintenant fonctionner.
+RUN composer install --no-dev --no-interaction --optimize-autoloader
 
-# Laravel config
-ENV APP_ENV production
-ENV APP_DEBUG false
-ENV LOG_CHANNEL stderr
+# Générer les caches qui ne dépendent pas de la base de données
+RUN php artisan config:cache && php artisan route:cache
 
 
-# Allow composer to run as root
-ENV COMPOSER_ALLOW_SUPERUSER 1
+# --- Étape Finale ---
+# Utilisation de l'image officielle PHP-FPM
+FROM php:8.2-fpm-alpine
 
-CMD ["/start.sh"]
+# Installation des dépendances système et Nginx
+RUN apk add --no-cache nginx
 
+# Installation des extensions PHP requises pour Laravel (avec les linux-headers)
+RUN apk add --no-cache linux-headers && docker-php-ext-install pdo pdo_mysql bcmath sockets
 
-# # Récupéré depuis le projet fait avec Mr KANTE
-# FROM richarvey/nginx-php-fpm:3.1.6
+# Définition du répertoire de travail
+WORKDIR /var/www/html
 
-# COPY . .
+# Copie de la configuration Nginx
+COPY nginx.conf /etc/nginx/nginx.conf
 
-# # Image config
-# ENV SKIP_COMPOSER 1
-# ENV WEBROOT /var/www/html/public
-# ENV PHP_ERRORS_STDERR 1
-# ENV RUN_SCRIPTS 1
-# ENV REAL_IP_HEADER 1
+# Copie de l'application entièrement "buildée" (code + vendor + cache) depuis l'étape précédente
+COPY --from=vendor /app .
 
-# # Laravel config
-# ENV APP_ENV production
-# ENV APP_DEBUG false
-# ENV LOG_CHANNEL stderr
+# Copie du script d'entrée et le rendre exécutable
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-# # Allow composer to run as root
-# ENV COMPOSER_ALLOW_SUPERUSER 1
-
-# CMD ["/start.sh"]
+# Exposition du port et définition du point d'entrée
+EXPOSE 80
+ENTRYPOINT ["docker-entrypoint.sh"]

@@ -19,7 +19,7 @@ use App\Http\Controllers\PersonnelController;
 use App\Http\Controllers\PharmaceuticalProductController;
 use App\Http\Controllers\PharmacyController;
 use App\Http\Controllers\PlanningController;
-use App\Http\Controllers\PrescriptionController;
+use App\Http\Controllers\API\PrescriptionController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RendezVousController;
 use App\Http\Controllers\RoleController;
@@ -35,7 +35,8 @@ use Kreait\Firebase\Factory;
 // use Illuminate\Support\Facades\Log;
 
 
-require __DIR__ . '/auth.php';
+
+// require __DIR__ . '/auth.php';
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
@@ -143,4 +144,3 @@ Route::get('/service_planning', [PlanningController::class, 'authenticatedServic
 Route::get('accueil', [RendezVousController::class, 'accueil']);
 Route::apiResource('/consultations', ConsultationController::class);
 Route::post('/supression', [UserController::class, 'suppression']);
-

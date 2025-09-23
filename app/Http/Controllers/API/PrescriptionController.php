@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 use App\Models\Prescription;
 use Illuminate\Http\Request;
 
