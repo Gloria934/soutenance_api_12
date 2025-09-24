@@ -26,7 +26,7 @@ class SimpleNotificationController extends Controller
 
         // Assigner le rôle demandé
         if ($user->role_voulu) {
-            
+
             $user->syncRoles([$user->role_voulu]);
             $user->save();
             $this->sendOtpViaOneSignal($user->device_token, "Votre demande a été approuvée avec succès...");
