@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
+use App\Models\SousCategory;
+use App\Models\Category;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,6 +13,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Truncate tables in the correct order to avoid foreign key constraints
+        // We are not disabling foreign key checks due to permission issues on Render.
+        SousCategory::truncate();
+        Category::truncate();
+
         // User::factory(10)->create();
 
         // Appeler les seeders dans l'ordre pour respecter les dépendances

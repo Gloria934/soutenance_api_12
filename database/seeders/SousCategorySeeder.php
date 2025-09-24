@@ -14,23 +14,6 @@ class SousCategorySeeder extends Seeder
      */
     public function run(): void
     {
-        // Désactiver les contraintes de clés étrangères
-        if (DB::connection()->getDriverName() == 'pgsql') {
-            DB::statement("SET session_replication_role = 'replica';");
-        } else {
-            DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        }
-
-        // Vider la table avant insertion
-        SousCategory::truncate();
-
-        // Réactiver les contraintes de clés étrangères
-        if (DB::connection()->getDriverName() == 'pgsql') {
-            DB::statement("SET session_replication_role = 'origin';");
-        } else {
-            DB::statement('SET FOREIGN_KEY_CHECKS=1;');
-        }
-
         // Liste de sous-catégories par catégorie, inspirée de l'exemple
         $sousCategories = [
             'Antalgiques' => [

@@ -17,16 +17,6 @@ class CategorySeeder extends Seeder
         // Initialiser Faker en français
         $faker = Faker::create('fr_FR');
 
-        // Désactiver les contraintes de clés étrangères
-        if (DB::connection()->getDriverName() == 'pgsql') {
-            DB::statement("SET session_replication_role = 'replica';");
-        } else {
-            DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        }
-
-        // Vider la table avant insertion
-        Category::truncate();
-
         // Liste de catégories pour une pharmacie
         $categories = [
             ['nom' => 'Antalgiques', 'description' => $faker->sentence(6)],
@@ -40,13 +30,6 @@ class CategorySeeder extends Seeder
         // Insérer les catégories
         foreach ($categories as $category) {
             Category::create($category);
-        }
-
-        // Réactiver les contraintes de clés étrangères
-        if (DB::connection()->getDriverName() == 'pgsql') {
-            DB::statement("SET session_replication_role = 'origin';");
-        } else {
-            DB::statement('SET FOREIGN_KEY_CHECKS=1;');
         }
     }
 }
