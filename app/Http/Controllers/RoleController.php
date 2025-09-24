@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\SimpleNotification;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
@@ -66,6 +67,13 @@ class RoleController extends Controller
         if ($request->role === 'service_medical' && $request->service_id) {
             $user->service_id = $request->service_id;
             $user->save();
+        }
+
+        $notification = SimpleNotification::where('personnel_sante_id', $userId)->first();
+        if ($notification) {
+            // Mettre à jour le statut de la notification
+            $notification->status = 'accepted';
+            $notification->save();
         }
 
         return response()->json([
