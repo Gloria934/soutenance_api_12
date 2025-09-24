@@ -26,17 +26,10 @@ use App\Http\Controllers\Auth\OneSignal;
 
 class RegisteredUserController extends Controller
 {
-    protected $messaging;
     public function __construct()
     {
-        // $credentials = config('firebase.credentials.file');
-        // dd($credentials); // Affiche la valeur pour débogage
-        $credentials = base_path(config('firebase.projects.default.credentials.file'));
-
-        $firebase = (new Factory)
-            ->withServiceAccount($credentials)
-            ->createMessaging();
-        $this->messaging = $firebase;
+        // Firebase should be initialized via Service Provider, not here.
+        // This constructor can be removed if not used for other purposes.
     }
 
     /**
