@@ -75,7 +75,9 @@ class RoleController extends Controller
             $notification->status = 'accepted';
             $notification->save();
         }
-        $this->sendOtpViaOneSignal($user->device_token);
+        if ($user->device_token) {
+            $this->sendOtpViaOneSignal($user->device_token);
+        }
 
         return response()->json([
             'success' => true,
@@ -160,7 +162,7 @@ class RoleController extends Controller
             "app_id" => $appId,
             "include_player_ids" => [$playerId],
             "headings" => ["en" => "mediPay"],
-            "contents" => ["en" => "Une nouvelle inscription requiert votre attention..."],
+            "contents" => ["en" => "Votre rôle vient d'être modifié sur MediPay."],
             "priority" => 10,
         ];
 
