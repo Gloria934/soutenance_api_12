@@ -10,8 +10,7 @@ COPY . .
 # Installe les dépendances. Les scripts post-install devraient maintenant fonctionner.
 RUN composer install --no-dev --no-interaction --optimize-autoloader
 
-# Générer les caches qui ne dépendent pas de la base de données
-RUN php artisan config:cache && php artisan route:cache
+# Ne pas générer de cache ici pour éviter les problèmes de chemins absolus.
 
 
 # --- Étape Finale ---
