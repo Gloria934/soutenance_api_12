@@ -22,7 +22,7 @@ FROM php:8.2-fpm-alpine
 RUN apk add --no-cache nginx
 
 # Installation des extensions PHP requises pour Laravel (avec les linux-headers)
-RUN apk add --no-cache linux-headers && docker-php-ext-install pdo pdo_mysql bcmath sockets
+RUN apk add --no-cache linux-headers postgresql-dev && docker-php-ext-install pdo pdo_mysql pdo_pgsql bcmath sockets
 
 # Définition du répertoire de travail
 WORKDIR /var/www/html
