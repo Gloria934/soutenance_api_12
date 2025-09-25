@@ -411,7 +411,17 @@ class RendezVousController extends Controller
             ], 422);
         }
 
+
         $rdv->update($request->all());
+        $service = Service::findOrFail($rdv->service_id);
+        if ($service->sous_rdv) {
+            $rdv->type = "rendez-vous";
+        } else {
+            $rdv->type = "consultation";
+        }
+        $rdv->save();
+
+
 
         return response()->json([
             'success' => true,
