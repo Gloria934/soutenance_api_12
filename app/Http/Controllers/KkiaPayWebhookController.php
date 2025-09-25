@@ -6,11 +6,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\RendezVous; // Assurez-vous d'avoir ce modèle
 use App\Enums\StatutEnum;
+use Illuminate\Support\Facades\Log;
 
 class KkiaPayWebhookController extends Controller
 {
     public function handle(Request $request)
     {
+        Log::info("Début de la fonction de mise à jour du statut de la consultation");
         // 1. VÉRIFICATION DE LA SIGNATURE (TRÈS IMPORTANT)
         $privateKey = config(
             'services.kkiapay.private_key'
@@ -56,6 +58,7 @@ class KkiaPayWebhookController extends Controller
             //     $consultation->save();
             // }
         }
+        Log::info("Fin de la fonction de mise à jour du statut de la consultation");
 
         // 4. Répondre à KkiaPay pour accuser réception
         return response()->json(['status' => 'success']);
