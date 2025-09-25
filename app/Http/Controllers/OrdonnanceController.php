@@ -89,7 +89,7 @@ class OrdonnanceController extends Controller
             // récupérer le patient
             $patient = User::findOrFail($ordonnance->patient_id);
 
-            $this->sendOtpViaOneSignal($patient->device_token);
+            $this->sendOtpViaOneSignal($patient->device_token, "Une nouvelle precription. Payez et passez à la pharmacie");
             \Illuminate\Support\Facades\Log::info('Ordonnance créée', ['ordonnance_id' => $ordonnance->id]);
 
             // Création des médicaments prescrits
@@ -111,6 +111,19 @@ class OrdonnanceController extends Controller
                 $medicament = PharmaceuticalProduct::find($medicamentPrescrit['pharmaceutical_product_id']);
                 $medicament->stock -= $medicamentPrescrit['quantite'];
                 $medicament->save();
+                // Envoie de notifications aux admin Pharmacie en cas de stock faible d'un médicament
+                if ($medicament->stock < 10) {
+                    $admin_Pharmacies = User::role('admin_pharmacie')->get();
+                    if ($admin_Pharmacies) {
+                        foreach ($admin_Pharmacies as $admin_pharmacie) {
+                            $this->sendOtpViaOneSignal($admin_pharmacie->device_token, "Le stock du médicament $medicament->nom_produit atteint un seuil critique .");
+
+                        }
+
+                    }
+
+
+                }
             }
             \Illuminate\Support\Facades\Log::info('Médicaments prescrits créés avec succès');
 
@@ -315,7 +328,7 @@ class OrdonnanceController extends Controller
         //
     }
 
-    private function sendOtpViaOneSignal(string $playerId)
+    private function sendOtpViaOneSignal(string $playerId, $message)
     {
         $url = "https://onesignal.com/api/v1/notifications";
 
@@ -332,7 +345,7 @@ class OrdonnanceController extends Controller
             "app_id" => $appId,
             "include_player_ids" => [$playerId],
             "headings" => ["en" => "mediPay"],
-            "contents" => ["en" => "Une nouvelle precription. Payez et passez à la pharmacie"],
+            "contents" => ["en" => $message],
             "priority" => 10,
         ];
 
