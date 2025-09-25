@@ -145,4 +145,3 @@ Route::get('/service_planning', [PlanningController::class, 'authenticatedServic
 Route::get('accueil', [RendezVousController::class, 'accueil']);
 Route::apiResource('/consultations', ConsultationController::class);
 Route::post('/supression', [UserController::class, 'suppression']);
-Route::post('/kkiapay/rendez_vous/webhook', [KkiapayWebhookController::class, 'handle']);
