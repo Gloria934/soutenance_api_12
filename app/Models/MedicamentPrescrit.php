@@ -33,6 +33,11 @@ class MedicamentPrescrit extends Model
     use SoftDeletes;
     protected $table = 'medicaments_prescrits';
 
+    // These two lines are added to handle the composite primary key
+    // and prevent Laravel from expecting a single auto-incrementing 'id' column.
+    protected $primaryKey = null;
+    public $incrementing = false;
+
 
 
     protected $fillable = [

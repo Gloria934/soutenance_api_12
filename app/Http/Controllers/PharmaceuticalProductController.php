@@ -179,7 +179,7 @@ class PharmaceuticalProductController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Produit non trouvé',
-            ], 404);
+            ], 404);    
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
