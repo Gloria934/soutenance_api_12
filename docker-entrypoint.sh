@@ -3,7 +3,7 @@
 set -e
 
 echo "Configuration des permissions..."
-chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/lib/nginx
 chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 echo "Exécution des migrations..."
