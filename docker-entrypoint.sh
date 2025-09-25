@@ -9,6 +9,11 @@ chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 echo "Exécution des migrations..."
 php artisan migrate --force
 
+echo "Création du lien symbolique pour le stockage..."
+if [ ! -L /var/www/html/public/storage ]; then
+    php artisan storage:link
+fi
+
 echo "Génération des caches de production..."
 php artisan config:cache
 php artisan route:cache
