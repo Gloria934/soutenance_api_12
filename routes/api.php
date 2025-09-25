@@ -12,6 +12,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\ConsultationController;
 use App\Http\Controllers\DeviceTokenController;
 use App\Http\Controllers\FournitureController;
+use App\Http\Controllers\KkiapayWebhookController;
 use App\Http\Controllers\LangueController;
 use App\Http\Controllers\OrdonnanceController;
 use App\Http\Controllers\PatientController;
@@ -144,3 +145,4 @@ Route::get('/service_planning', [PlanningController::class, 'authenticatedServic
 Route::get('accueil', [RendezVousController::class, 'accueil']);
 Route::apiResource('/consultations', ConsultationController::class);
 Route::post('/supression', [UserController::class, 'suppression']);
+Route::post('/kkiapay/rendez_vous/webhook', [KkiapayWebhookController::class, 'handle']);

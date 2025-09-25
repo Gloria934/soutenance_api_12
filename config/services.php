@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'kkiapay' => [
+        'private_key' => env('KKIAPAY_PRIVATE_KEY'),
+    ],
+
 ];
