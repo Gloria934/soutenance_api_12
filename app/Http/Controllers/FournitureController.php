@@ -36,9 +36,6 @@ class FournitureController extends Controller
             'prix' => 'required|numeric',
             'quantite' => 'required|numeric',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-
-
-
         ]);
 
         if ($validator->fails()) {
@@ -47,6 +44,7 @@ class FournitureController extends Controller
                 'errors' => $validator->messages()
             ], 210);
         }
+
         try {
             // Vérifiez si le fichier est reçu
             if (!$request->hasFile('image') || !$request->file('image')->isValid()) {
@@ -56,14 +54,26 @@ class FournitureController extends Controller
                 ], 213);
             }
 
+            $imagePath = null; // Initialize imagePath
+            if ($request->hasFile('image')) {
+                $image = $request->file('image');
+                $imageName = time() . '.' . $image->getClientOriginalExtension();
+                $path = $image->storeAs('fournitures', $imageName, 'public');
+                $imagePath = 'storage/' . $path; // Assign to imagePath
+            }
 
-            // Handle image upload
-            $image = $request->file('image');
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
-            $path = $image->storeAs('fournitures', $imageName, 'public'); // Stores in storage/app/public/fournitures
-            $fourniture->image = 'storage/' . $path; // Path relative to public/storage
+            $fourniture = Fourniture::create([
+                'nom' => $request->nom,
+                'prix' => $request->prix,
+                'quantite' => $request->quantite,
+                'image' => $imagePath, // Use the assigned imagePath
+            ]);
 
-
+            return response()->json([
+                'status' => 201,
+                'message' => 'fourniture créé avec succès .',
+                'fourniture' => $fourniture
+            ], 201);
 
         } catch (\Exception $e) {
             return response()->json([
@@ -71,22 +81,6 @@ class FournitureController extends Controller
                 'message' => 'Erreur lors de la création de la fourniture: ' . $e->getMessage(),
             ], 500);
         }
-
-        $fourniture = Fourniture::create([
-            'nom' => $request->nom,
-            'prix' => $request->prix,
-            'quantite' => $request->quantite,
-            'image' => $imagePath,
-
-
-
-        ]);
-
-        return response()->json([
-            'status' => 201,
-            'message' => 'fourniture créé avec succès .',
-            'fourniture' => $fourniture
-        ], 201);
     }
 
 
