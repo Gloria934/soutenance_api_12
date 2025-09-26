@@ -60,13 +60,8 @@ class FournitureController extends Controller
             // Handle image upload
             $image = $request->file('image');
             $imageName = time() . '.' . $image->getClientOriginalExtension();
-            $publicPath = public_path('fournitures');
-
-
-
-            // Move the file to the public directory
-            $image->move($publicPath, $imageName);
-            $imagePath = 'fournitures/' . $imageName;
+            $path = $image->storeAs('fournitures', $imageName, 'public'); // Stores in storage/app/public/fournitures
+            $fourniture->image = 'storage/' . $path; // Path relative to public/storage
 
 
 
