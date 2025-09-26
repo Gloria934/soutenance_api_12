@@ -154,16 +154,8 @@ class SpecialiteController extends Controller
                 // Handle image upload
                 $image = $request->file('image');
                 $imageName = time() . '.' . $image->getClientOriginalExtension();
-                $publicPath = public_path('specialistes');
-
-                // // Create directory if it doesn't exist
-                // if (!file_exists($publicPath)) {
-                //     mkdir($publicPath, 0777, true);
-                // }
-
-                // Move the file to the public directory
-                $image->move($publicPath, $imageName);
-                $imagePath = 'specialistes/' . $imageName;
+                $path = $image->storeAs('specialistes', $imageName, 'public'); // Stores in storage/app/public/specialistes
+                $imagePath = 'storage/' . $path; // Path relative to public/storage
 
 
 
@@ -297,16 +289,8 @@ class SpecialiteController extends Controller
                 // Handle image upload
                 $image = $request->file('image');
                 $imageName = time() . '.' . $image->getClientOriginalExtension();
-                $publicPath = public_path('specialistes');
-
-                // // Create directory if it doesn't exist
-                // if (!file_exists($publicPath)) {
-                //     mkdir($publicPath, 0777, true);
-                // }
-
-                // Move the file to the public directory
-                $image->move($publicPath, $imageName);
-                $imagePath = 'specialistes/' . $imageName;
+                $path = $image->storeAs('specialistes', $imageName, 'public'); // Stores in storage/app/public/specialistes
+                $imagePath = 'storage/' . $path; // Path relative to public/storage
 
                 $specialiste->profile = $imagePath;
                 $specialiste->save();
