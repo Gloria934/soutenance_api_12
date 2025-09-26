@@ -430,6 +430,25 @@ class RendezVousController extends Controller
         ], 200);
     }
 
+    public function invaliderRendezVous(Request $request)
+    {
+        $rendezvous = RendezVous::where('code_rendez_vous', $request->codeRendezVous)->first();
+        if ($rendezvous->statut == StatutEnum::TERMINE->value) {
+            return response()->json([
+                'success' => false,
+
+                'message' => 'Rendez-vous  déjà terminé.'
+            ], 210);
+        } else if ($rendezvous->statut == StatutEnum::ENATTENTE->value) {
+            $rendezvous->statut = StatutEnum::CONFIRME->value;
+            return response()->json([
+                'success' => true,
+                'message' => 'Rendez-vous terminé avec succès.'
+            ], 200);
+
+        }
+    }
+
     /**
      * Remove the specified resource from storage.
      */

@@ -118,6 +118,7 @@ Route::get('rendez-vous-utilisateur', [RendezVousController::class, 'getUserRdv'
 Route::post('rendez-vous-rapide', [RendezVousController::class, 'rdvRapide']);
 Route::apiResource('analyses', AnalyseController::class);
 Route::get('auth-analyses', [AnalyseController::class, 'getAuthAnalyses']);
+Route::post('invalider-rendez-vous', [RendezVousController::class, 'invaliderRendezVous']);
 
 
 // Route::apiResource('specialiste', SpecialisteController::class);

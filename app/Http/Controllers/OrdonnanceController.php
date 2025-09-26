@@ -203,7 +203,7 @@ class OrdonnanceController extends Controller
 
     }
 
-    public function invaliderOrdonnance(Request $request)
+    public function Ordonnance(Request $request)
     {
         // $ordonnance = Ordonnance::findOrFail($request->id);
         $ordonnance = Ordonnance::where('code_ordonnance', $request->code_ordonnance)->first();
